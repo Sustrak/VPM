@@ -5,7 +5,6 @@ use std::fs::File;
 pub struct PunkFileJSON {
     magic_number: String,
     pub classes: Vec<ClassDeserialize>,
-    pub main_fields: Vec<CodeDeserialize>,
     pub main_code: Vec<String>
 }
 
@@ -21,9 +20,9 @@ pub struct ClassDeserialize {
 
 #[derive(Deserialize)]
 pub struct CodeDeserialize {
-    name_index: usize,
-    descriptor_index: usize,
-    code: Vec<String>
+    pub name_index: usize,
+    pub descriptor_index: usize,
+    pub code: Vec<String>
 }
 
 impl PunkFileJSON {

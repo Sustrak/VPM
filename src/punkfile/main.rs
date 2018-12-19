@@ -1,14 +1,25 @@
 use punkfile::code::Code;
 use super::serde_json::Value;
+use isa::bytecode::ByteCode;
 
 #[derive(Default)]
 pub struct Main {
-    fields: Vec<Code>,
-    //code: Bytecode,
+    code: Vec<ByteCode>,
 }
 
 impl Main {
-    pub fn set_info(fields: Value, code: Value) {
-
+    pub fn new(code: Vec<String>) -> Main {
+        let mut main: Main = Default::default();
+        for ins in code {
+            let mut split_inst = ins.split_whitespace();
+            let instruction: ByteCode = match split_inst.next() {
+                Some(v) => {
+                    Code::parse_ins(&mut split_inst, v)
+                },
+                None => panic!("The code section is malformed"),
+            };
+            main.code.push(instruction);
+        }
+        main
     }
 }

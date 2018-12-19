@@ -16,9 +16,11 @@ impl PunkFile {
         let mut pk: PunkFile = Default::default();
 
         for cls in pk_des.classes {
-            let c: Class = Class::new(&cls);
+            let c: Class = Class::new(cls);
             pk.classes.push(c);
         }
+
+        let mut main: Main = Main::new(pk_des.main_code);
 
         pk
     }
