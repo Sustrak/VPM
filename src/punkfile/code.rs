@@ -2,7 +2,7 @@ use punkfile::deserializer::CodeDeserialize;
 use isa::bytecode::ByteCode;
 use std::str::SplitWhitespace;
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct Code {
     name: usize,
     desc: usize,

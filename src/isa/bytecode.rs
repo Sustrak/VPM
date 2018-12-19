@@ -1,4 +1,5 @@
 #[allow(non_camel_case_types)]
+#[derive(Debug)]
 pub enum ByteCode {
     MUL,
     DIV,
@@ -18,7 +19,7 @@ pub enum ByteCode {
     IF_EQ(String),
     IF_CMPLT(String),
     IF_CMPEQ(String),
-    GETFIELD {class: String, local: String},
-    PUTFIELD {class: String, local: String},
-    METHODCALL {class: String, method: String},
+    GETFIELD { class: String, local: String },
+    PUTFIELD { class: String, local: String },
+    METHODCALL { class: String, method: String },
 }

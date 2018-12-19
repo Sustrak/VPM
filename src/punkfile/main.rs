@@ -1,8 +1,7 @@
 use punkfile::code::Code;
-use super::serde_json::Value;
 use isa::bytecode::ByteCode;
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct Main {
     code: Vec<ByteCode>,
 }

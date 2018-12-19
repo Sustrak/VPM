@@ -9,5 +9,6 @@ use punkfile::punk_file::PunkFile;
 fn main() {
     println!("Hello, world!");
 
-    //PunkFile::from_file("test.json");
+    let pk = PunkFile::from_file("scheme.json");
+    println!("{:?}", pk)
 }

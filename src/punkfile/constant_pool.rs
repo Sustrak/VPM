@@ -1,7 +1,7 @@
 use punkfile::constant_items::ConstantItems;
 use super::serde_json::Value;
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct ConstantPool {
     pool: Vec<ConstantItems>
 }

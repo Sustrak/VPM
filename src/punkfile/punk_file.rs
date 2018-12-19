@@ -2,9 +2,9 @@ use punkfile::class::Class;
 use punkfile::main::Main;
 use punkfile::deserializer::PunkFileJSON;
 
-const MAGIC_NUMBER: &str =  "AAAA";
+const MAGIC_NUMBER: &str =  "CAFECAFE";
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct PunkFile {
     classes: Vec<Class>,
     main: Main,
@@ -20,7 +20,7 @@ impl PunkFile {
             pk.classes.push(c);
         }
 
-        let mut main: Main = Main::new(pk_des.main_code);
+        pk.main = Main::new(pk_des.main_code);
 
         pk
     }

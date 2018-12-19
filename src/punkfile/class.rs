@@ -2,7 +2,7 @@ use punkfile::constant_pool::ConstantPool;
 use punkfile::code::Code;
 use punkfile::deserializer::ClassDeserialize;
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct Class {
     constant_pool: ConstantPool,
     this: usize,

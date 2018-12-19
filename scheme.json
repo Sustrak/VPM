@@ -54,7 +54,7 @@
           "code": [
             "LOAD 5",
             "LOAD 4",
-            "IMUL",
+            "MUL",
             "STORE 4",
             "LOAD 5",
             "PRINT"
@@ -66,7 +66,7 @@
   "main_code": [
     "LOAD 5",
     "LOAD 4",
-    "IMUL",
+    "MUL",
     "STORE 4",
     "LOAD 5",
     "PRINT"
