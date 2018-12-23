@@ -1,19 +1,17 @@
-use memory::stack::Stack;
-
+#[derive(Eq, PartialEq, Clone)]
 pub enum Type {
     Integer(i32),
-    String(String)
+    String(String),
+    Object(usize),
 }
 
-#[derive(Default)]
 struct Frame {
     local_vars: Vec<Type>,
-    stack: Stack<Type>,
+    stack: Vec<Type>,
 }
 
-#[derive(Default)]
 struct StackVM {
-    stack: Stack<Frame>
+    stack: Vec<Frame>
 }
 
 impl Frame {
@@ -27,7 +25,10 @@ impl Frame {
             self.local_vars.reserve(res);
         }
 
-        let top = self.stack.pop();
+        let top = match self.stack.pop() {
+            Some(x) => x,
+            None => panic!("There's no elements on the stack"),
+        };
         self.local_vars.insert(i, top)
     }
 
@@ -37,7 +38,7 @@ impl Frame {
     pub fn get_var(&mut self, i: usize) {
         let index = i - 1;
         let var = match self.local_vars.get(index) {
-            Some(x) => x,
+            Some(x) => x.clone(),
             None => panic!("There's no localVariable in {}", i)
         };
 
@@ -54,11 +55,17 @@ impl StackVM {
         self.stack.pop();
     }
 
-    pub fn get_frame(&self) -> Frame {
-        self.stack.get()
+    pub fn get_frame(&self) -> &Frame {
+        match self.stack.last() {
+            Some(x) => x,
+            None => panic!("There are no frames to get")
+        }
     }
 
-    pub fn get_frame_mut(&mut self) -> Frame {
-        self.stack.get_mut()
+    pub fn get_frame_mut(&mut self) -> &mut Frame {
+        match self.stack.last_mut() {
+            Some(x) => x,
+            None => panic!("There are no frames to get")
+        }
     }
 }
