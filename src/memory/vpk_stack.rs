@@ -5,16 +5,24 @@ pub enum Type {
     Object(usize),
 }
 
-struct Frame {
+pub struct Frame {
     local_vars: Vec<Type>,
     stack: Vec<Type>,
 }
 
-struct StackVM {
-    stack: Vec<Frame>
+pub struct StackVM {
+    stack: Vec<Frame>,
+    ret_addr: Vec<usize>,
+    pc: usize
 }
 
 impl Frame {
+    pub fn new() -> Frame {
+        Frame {
+            local_vars: Vec::new(),
+            stack: Vec::new()
+        }
+    }
     /**
     Will get the top value of the stack and store it in the local variable
     */
@@ -35,7 +43,7 @@ impl Frame {
     /**
     Will get the local variable in index i and push it at the top of the stack
     */
-    pub fn get_var(&mut self, i: usize) {
+    pub fn load_var(&mut self, i: usize) {
         let index = i - 1;
         let var = match self.local_vars.get(index) {
             Some(x) => x.clone(),
@@ -43,6 +51,21 @@ impl Frame {
         };
 
         self.stack.push(var)
+    }
+
+    pub fn push_var(&mut self, var: Type) {
+        self.local_vars.push(var)
+    }
+
+    pub fn pop(&mut self) -> Type {
+        match self.stack.pop() {
+            Some(x) => x,
+            None => panic!("No element to return")
+        }
+    }
+
+    pub fn push(&mut self, t: Type) {
+        self.stack.push(t)
     }
 }
 
@@ -67,5 +90,13 @@ impl StackVM {
             Some(x) => x,
             None => panic!("There are no frames to get")
         }
+    }
+
+    pub fn methodcall_pc(&mut self) {
+
+    }
+
+    pub fn ret_pc(&mut self) {
+
     }
 }

@@ -1,12 +1,12 @@
 use std::collections::HashMap;
 use memory::vpk_stack::Type;
 
-struct Objects {
+pub struct Objects {
     objects: HashMap<String, Vec<Type>>
 }
 
 impl Objects {
-    pub fn get_field(&self, class: String, index: usize) -> &Type {
+    pub fn get_field(&self, class: String, index: usize) -> Type {
         match self.objects.get(class.as_str()) {
             Some(cls) => match cls.get(index) {
                 Some(v) => v,
