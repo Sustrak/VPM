@@ -1,14 +1,15 @@
 use punkfile::constant_pool::ConstantPool;
 use punkfile::code::Code;
 use punkfile::deserializer::ClassDeserialize;
+use punkfile::field::Field;
 
 #[derive(Default, Debug)]
 pub struct Class {
-    constant_pool: ConstantPool,
-    this: usize,
-    super_cls: usize,
-    fields: Vec<Code>,
-    methods: Vec<Code>,
+    pub constant_pool: ConstantPool,
+    pub this: usize,
+    pub super_cls: usize,
+    pub fields: Vec<Field>,
+    pub methods: Vec<Code>,
 }
 
 impl Class {
@@ -18,7 +19,7 @@ impl Class {
         c.this = cls.this;
         c.super_cls = cls.super_cls;
         for field in cls.fields {
-            c.fields.push(Code::new(field))
+            c.fields.push(Field::new(field))
         }
         for method in cls.methods {
             c.methods.push(Code::new(method))

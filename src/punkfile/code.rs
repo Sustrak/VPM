@@ -4,9 +4,9 @@ use std::str::SplitWhitespace;
 
 #[derive(Default, Debug)]
 pub struct Code {
-    name: usize,
-    desc: usize,
-    code: Vec<ByteCode>,
+    pub name: usize,
+    pub desc: usize,
+    pub code: Vec<ByteCode>,
 }
 
 impl Code {

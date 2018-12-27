@@ -3,7 +3,7 @@ use super::serde_json::Value;
 
 #[derive(Default, Debug)]
 pub struct ConstantPool {
-    pool: Vec<ConstantItems>
+    pub pool: Vec<ConstantItems>
 }
 
 impl ConstantPool {

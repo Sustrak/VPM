@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use memory::vpk_stack::Type;
 
+#[derive(Default)]
 pub struct Objects {
     objects: HashMap<String, Vec<Type>>
 }

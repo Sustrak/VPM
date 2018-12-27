@@ -2,7 +2,7 @@ use memory::vpk_stack::{StackVM, Frame, Type};
 use memory::objects::Objects;
 
 #[allow(non_camel_case_types)]
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum ByteCode {
     MUL,
     DIV,

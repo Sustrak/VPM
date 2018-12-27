@@ -8,3 +8,4 @@ pub mod code;
 pub mod main;
 pub mod class;
 pub mod deserializer;
+pub mod field;

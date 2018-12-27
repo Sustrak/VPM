@@ -6,8 +6,8 @@ const MAGIC_NUMBER: &str =  "CAFECAFE";
 
 #[derive(Default, Debug)]
 pub struct PunkFile {
-    classes: Vec<Class>,
-    main: Main,
+    pub classes: Vec<Class>,
+    pub main: Main,
 }
 
 impl PunkFile {

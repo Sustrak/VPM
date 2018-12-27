@@ -70,6 +70,14 @@ impl Frame {
 }
 
 impl StackVM {
+    pub fn new() -> StackVM {
+        StackVM {
+            stack: Vec::new(),
+            ret_addr: Vec::new(),
+            pc: 0
+        }
+    }
+
     pub fn push_frame(&mut self, f: Frame) {
         self.stack.push(f)
     }

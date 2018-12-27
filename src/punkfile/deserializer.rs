@@ -14,7 +14,7 @@ pub struct ClassDeserialize {
     pub this: usize,
     #[serde(rename = "super")]
     pub super_cls: usize,
-    pub fields: Vec<CodeDeserialize>,
+    pub fields: Vec<FieldDeserialize>,
     pub methods: Vec<CodeDeserialize>
 }
 
@@ -23,6 +23,13 @@ pub struct CodeDeserialize {
     pub name_index: usize,
     pub descriptor_index: usize,
     pub code: Vec<String>
+}
+
+#[derive(Deserialize)]
+pub struct FieldDeserialize {
+    pub name_index: usize,
+    pub descriptor_index: usize,
+    pub value: String
 }
 
 impl PunkFileJSON {

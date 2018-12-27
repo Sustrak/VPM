@@ -3,7 +3,7 @@ use isa::bytecode::ByteCode;
 
 #[derive(Default, Debug)]
 pub struct Main {
-    code: Vec<ByteCode>,
+    pub code: Vec<ByteCode>,
 }
 
 impl Main {
