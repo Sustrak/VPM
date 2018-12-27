@@ -70,10 +70,8 @@ pub fn sub(frame: &mut Frame) -> Result<(), &'static str> {
 }
 
 pub fn pop(frame: &mut Frame) -> Result<(), &'static str> {
-    match frame.pop() {
-        Some(_) => Ok(()),
-        None => Err("There's no element to POP from the stack")
-    }
+    frame.pop();
+    Ok(())
 }
 
 pub fn iadd(frame: &mut Frame) -> Result<(), &'static str> {
@@ -126,9 +124,17 @@ pub fn ret(stack: &mut StackVM) -> Result<(), &'static str> {
 
 }
 
-pub fn new(stack: &mut Frame) -> Result<(), &'static str> {}
-pub fn label(stack: &mut Frame) -> Result<(), &'static str> {}
-pub fn goto(stack: &mut Frame) -> Result<(), &'static str> {}
+pub fn new(objects: &mut Objects, object: String, fields: Vec<Type>) -> Result<(), &'static str> {
+    objects.new_object(object, fields);
+    Ok(())
+}
+
+//pub fn label(stack: &mut Frame) -> Result<(), &'static str> {}
+
+pub fn goto(stack: &mut StackVM, new_pc: usize) -> Result<(), &'static str> {
+    stack.new_pc(new_pc);
+    Ok(())
+}
 
 pub fn load(stack: &mut Frame, local: usize) -> Result<(), &'static str> {
     stack.store_var(local);
@@ -140,10 +146,73 @@ pub fn store(stack: &mut Frame, local: usize) -> Result<(), &'static str> {
     Ok(())
 }
 
-pub fn cnst(stack: &mut Frame) -> Result<(), &'static str> {}
-pub fn if_eq(stack: &mut Frame) -> Result<(), &'static str> {}
-pub fn if_cmplt(stack: &mut Frame) -> Result<(), &'static str> {}
-pub fn if_cmpeq(stack: &mut Frame) -> Result<(), &'static str> {}
+pub fn cnst(stack: &mut Frame, con: Type) -> Result<(), &'static str> {
+    stack.push(con);
+    Ok(())
+}
+
+pub fn if_eq(stack: &mut StackVM, new_pc: usize) -> Result<(), &'static str> {
+    let v = stack.get_frame_mut().pop();
+    match v {
+        Type::Integer(x) => {
+            if x == 0 {
+                stack.new_pc(new_pc)
+            }
+            Ok(())
+        }
+        _ => Err("Can't compare when the value is not a integer")
+    }
+}
+
+/// *-------------*
+/// *    STACK    *
+/// *-------------*
+/// *     v1      *
+/// *     v2      *
+/// *-------------*
+pub fn if_cmpeq(stack: &mut StackVM, new_pc: usize) -> Result<(), &'static str> {
+    let v1: Type;
+    let v2: Type;
+    {
+        let s = stack.get_frame_mut();
+        v2 = s.pop();
+        v1 = s.pop();
+    }
+    match (v1, v2) {
+        (Type::Integer(x1), Type::Integer(x2)) => {
+            if x1 == x2 {
+                stack.new_pc(new_pc)
+            }
+            Ok(())
+        }
+        _ => Err("Can't compare when the value is not a integer")
+    }
+}
+
+/// *-------------*
+/// *    STACK    *
+/// *-------------*
+/// *     v1      *
+/// *     v2      *
+/// *-------------*
+pub fn if_cmplt(stack: &mut StackVM, new_pc: usize) -> Result<(), &'static str> {
+    let v1: Type;
+    let v2: Type;
+    {
+        let s = stack.get_frame_mut();
+        v2 = s.pop();
+        v1 = s.pop();
+    }
+    match (v1, v2) {
+        (Type::Integer(x1), Type::Integer(x2)) => {
+            if x1 < x2 {
+                stack.new_pc(new_pc)
+            }
+            Ok(())
+        }
+        _ => Err("Can't compare when the value is not a integer")
+    }
+}
 
 pub fn getfield(stack: &mut Frame, objects: &Objects, class: String, local: usize) -> Result<(), &'static str> {
     let field = objects.get_field(class, local);
@@ -156,6 +225,7 @@ pub fn putfield(stack: &mut Frame, objects: &mut Objects, class: String, local: 
     objects.set_field(class, local, field);
     Ok(())
 }
+
 /// A new frame will be created and all the parameters will be stored in local variables in the order of the signature
 /// *-------------*
 /// *    STACK    *
@@ -167,16 +237,21 @@ pub fn putfield(stack: &mut Frame, objects: &mut Objects, class: String, local: 
 /// *-------------*
 ///
 pub fn methodcall(stack: &mut StackVM, signature: String, new_pc: usize) -> Result<(), &'static str> {
-    let n_args: usize = 3;
-    let frame = stack.get_frame_mut();
+    let n_args: usize = {
+        let v: Vec<&str> = signature.split(|c| c == '(' || c == ')').collect();
+        v[1].len()
+    };
     let mut new_frame: Frame = Frame::new();
+    {
+        let frame = stack.get_frame_mut();
 
-    for _ in 0..n_args {
-        new_frame.push_var(frame.pop())
+
+        for _ in 0..n_args {
+            new_frame.push_var(frame.pop())
+        }
     }
-
     stack.push_frame(new_frame);
-
+    stack.methodcall_pc(new_pc);
 
     Ok(())
 }

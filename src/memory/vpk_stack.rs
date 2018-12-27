@@ -92,11 +92,24 @@ impl StackVM {
         }
     }
 
-    pub fn methodcall_pc(&mut self) {
-
+    pub fn methodcall_pc(&mut self, new_pc: usize) {
+        self.ret_addr.push(self.pc);
+        self.pc = new_pc
     }
 
     pub fn ret_pc(&mut self) {
+        match self.ret_addr.pop() {
+            Some(x) => self.pc = x,
+            None => panic!("There's no return address in the stack")
+        }
+    }
 
+    pub fn inc_pc(&mut self) -> usize {
+        self.pc += 1;
+        self.pc
+    }
+
+    pub fn new_pc(&mut self, n_pc: usize) {
+        self.pc = n_pc
     }
 }

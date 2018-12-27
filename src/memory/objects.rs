@@ -6,20 +6,24 @@ pub struct Objects {
 }
 
 impl Objects {
-    pub fn get_field(&self, class: String, index: usize) -> Type {
-        match self.objects.get(class.as_str()) {
+    pub fn get_field(&self, object: String, index: usize) -> Type {
+        match self.objects.get(object.as_str()) {
             Some(cls) => match cls.get(index) {
-                Some(v) => v,
+                Some(v) => return v.clone(),
                 None => panic!("The field in {} doesn't exist", index)
             },
-            None => panic!("The class doesn't exist")
+            None => panic!("The object doesn't exist")
         }
     }
 
-    pub fn set_field(&mut self, class: String, index: usize, value: Type) {
-        match self.objects.get_mut(class.as_str()) {
+    pub fn set_field(&mut self, object: String, index: usize, value: Type) {
+        match self.objects.get_mut(object.as_str()) {
             Some(cls) => cls.insert(index, value),
-            None => panic!("The class doesn't exist")
+            None => panic!("The object doesn't exist")
         }
+    }
+
+    pub fn new_object(&mut self, object: String, fields: Vec<Type>) {
+        self.objects.insert(object, fields);
     }
 }
