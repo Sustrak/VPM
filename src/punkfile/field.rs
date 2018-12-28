@@ -1,9 +1,10 @@
 use punkfile::deserializer::FieldDeserialize;
+use memory::vpk_stack::Type;
 
 #[derive(Default, Debug)]
 pub struct Field {
-    pub name: usize,
-    pub desc: usize,
+    pub name: String,
+    pub desc: String,
     pub value: String,
 }
 
@@ -13,6 +14,13 @@ impl Field {
             name: fd.name_index,
             desc: fd.descriptor_index,
             value: fd.value
+        }
+    }
+
+    pub fn get_type(&self) -> Type {
+        match self.value.parse::<i32>() {
+            Some(i) => Type::Integer(i),
+            Err(_) => Type::String(self.value.clone())
         }
     }
 }

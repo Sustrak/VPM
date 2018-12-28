@@ -4,8 +4,8 @@ use std::str::SplitWhitespace;
 
 #[derive(Default, Debug)]
 pub struct Code {
-    pub name: usize,
-    pub desc: usize,
+    pub name: String,
+    pub desc: String,
     pub code: Vec<ByteCode>,
 }
 
@@ -41,7 +41,6 @@ impl Code {
             "SADD" => ByteCode::SADD,
             "PRINT" => ByteCode::PRINT,
             "RETURN" => ByteCode::RETURN,
-            "NEW" => ByteCode::NEW(next(&mut split_inst)),
             "GOTO" => ByteCode::GOTO(next(&mut split_inst)),
             "LOAD" => ByteCode::LOAD(next(&mut split_inst)),
             "CONST" => ByteCode::CONST(next(&mut split_inst)),
@@ -50,6 +49,10 @@ impl Code {
             "IF_EQ" => ByteCode::IF_EQ(next(&mut split_inst)),
             "IF_CMPLT" => ByteCode::IF_CMPLT(next(&mut split_inst)),
             "IF_CMPEQ" => ByteCode::IF_CMPEQ(next(&mut split_inst)),
+            "NEW" => ByteCode::NEW {
+                class: next(&mut split_inst),
+                name: next(&mut split_inst)
+            },
             "GETFIELD" => ByteCode::GETFIELD {
                 class: next(&mut split_inst),
                 local: next(&mut split_inst)

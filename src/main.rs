@@ -13,6 +13,9 @@ use punkfile::constant_items::ConstantItems;
 use memory::vpk_stack::Frame;
 use isa::bytecode::ByteCode;
 use isa::bytecode;
+use punkfile::class::Class;
+use memory::vpk_stack::Type;
+use std::collections::HashMap;
 
 fn main() {
     // Data structures
@@ -23,16 +26,10 @@ fn main() {
 
     // Initialize code structure
     for cls in pk.classes {
-        let cls_name = match cls.constant_pool.pool[cls.this] {
-            ConstantItems::ConstantInfo(s) => s,
-            _ => panic!("this_class should point to a ConstantInfo")
-        };
+        let cls_name = cls.this;
 
         for m in cls.methods {
-            let mthd_name = match cls.constant_pool.pool[m.name] {
-                ConstantItems::ConstantInfo(s) => s,
-                _ => panic!("name in code should point to ConstantInfo")
-            };
+            let mthd_name = m.name;
             let name = format!("{}{}", cls_name, mthd_name);
             let mut code = m.code.to_owned();
             instructions.new_method(name, &mut code)
@@ -101,8 +98,30 @@ fn main() {
                     Err(msg) => report_error(pc, msg)
                 }
             },
-            ByteCode::NEW(obj) => {
+            ByteCode::NEW {class, name} => {
+                // Search the class in the constant pool
+                let cls = match pk.find_class(class) {
+                    Ok(c) => c,
+                    Err(msg) => report_error(pc, msg)
+                };
 
+                let mut fields: HashMap<String, Type> = HashMap::new();
+                // Check if has parent
+                if cls.this != cls.super_cls {
+                    let parent = match pk.find_class(&cls.super_cls) {
+                        Ok(c) => c,
+                        Err(msg) => report_error(pc, msg)
+                    };
+                    for f in parent.fields {
+                        fields.insert(f.name, f.get_type())
+                    }
+                }
+                for f in cls.fields {
+                    fields.insert(f.name, f.get_type())
+                }
+
+                // Create object
+                bytecode::new(&mut objects, name.clone(), fields);
             },
         }
     }

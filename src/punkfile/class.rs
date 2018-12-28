@@ -6,8 +6,8 @@ use punkfile::field::Field;
 #[derive(Default, Debug)]
 pub struct Class {
     pub constant_pool: ConstantPool,
-    pub this: usize,
-    pub super_cls: usize,
+    pub this: String,
+    pub super_cls: String,
     pub fields: Vec<Field>,
     pub methods: Vec<Code>,
 }

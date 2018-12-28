@@ -1,5 +1,6 @@
 use memory::vpk_stack::{StackVM, Frame, Type};
 use memory::objects::Objects;
+use std::collections::HashMap;
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone)]
@@ -13,7 +14,6 @@ pub enum ByteCode {
     //NULL
     PRINT,
     RETURN,
-    NEW(String),
     LABEL(String),
     GOTO(String),
     LOAD(String),
@@ -22,6 +22,7 @@ pub enum ByteCode {
     IF_EQ(String),
     IF_CMPLT(String),
     IF_CMPEQ(String),
+    NEW {class: String, name: String},
     GETFIELD { class: String, local: String },
     PUTFIELD { class: String, local: String },
     METHODCALL { class: String, method: String },
@@ -124,7 +125,7 @@ pub fn ret(stack: &mut StackVM) -> Result<(), &'static str> {
 
 }
 
-pub fn new(objects: &mut Objects, object: String, fields: Vec<Type>) -> Result<(), &'static str> {
+pub fn new(objects: &mut Objects, object: String, fields: HashMap<String, Type>) -> Result<(), &'static str> {
     objects.new_object(object, fields);
     Ok(())
 }
@@ -220,7 +221,7 @@ pub fn getfield(stack: &mut Frame, objects: &Objects, class: String, local: usiz
     Ok(())
 }
 
-pub fn putfield(stack: &mut Frame, objects: &mut Objects, class: String, local: usize) -> Result<(), &'static str> {
+pub fn putfield(stack: &mut Frame, objects: &mut Objects, class: String, local: String) -> Result<(), &'static str> {
     let field = stack.pop();
     objects.set_field(class, local, field);
     Ok(())
