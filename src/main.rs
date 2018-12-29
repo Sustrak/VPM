@@ -12,7 +12,7 @@ use memory::instructions::Instructions;
 use punkfile::constant_items::ConstantItems;
 use memory::vpk_stack::Frame;
 use isa::bytecode::ByteCode;
-use bytecode;
+use isa::bytecode;
 use memory::vpk_stack::Type;
 use std::collections::HashMap;
 
