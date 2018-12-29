@@ -120,4 +120,8 @@ impl StackVM {
     pub fn new_pc(&mut self, n_pc: usize) {
         self.pc = n_pc
     }
+
+    pub fn is_empty(&self) -> bool {
+        self.stack.is_empty()
+    }
 }

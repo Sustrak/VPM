@@ -29,7 +29,7 @@ impl PunkFile {
         let cls: Class;
         let mut find = false;
         for c in self.classes {
-            if c.this == name {
+            if c.this == *name {
                 cls = c;
                 find = true;
             }

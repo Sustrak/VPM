@@ -42,10 +42,10 @@ impl Code {
             "PRINT" => ByteCode::PRINT,
             "RETURN" => ByteCode::RETURN,
             "GOTO" => ByteCode::GOTO(next(&mut split_inst)),
-            "LOAD" => ByteCode::LOAD(next(&mut split_inst)),
+            "LOAD" => ByteCode::LOAD(next(&mut split_inst).parse::<usize>().unwrap()),
             "CONST" => ByteCode::CONST(next(&mut split_inst)),
             "LABEL" => ByteCode::LABEL(next(&mut split_inst)),
-            "STORE" => ByteCode::STORE(next(&mut split_inst)),
+            "STORE" => ByteCode::STORE(next(&mut split_inst).parse::<usize>().unwrap()),
             "IF_EQ" => ByteCode::IF_EQ(next(&mut split_inst)),
             "IF_CMPLT" => ByteCode::IF_CMPLT(next(&mut split_inst)),
             "IF_CMPEQ" => ByteCode::IF_CMPEQ(next(&mut split_inst)),
@@ -54,11 +54,11 @@ impl Code {
                 name: next(&mut split_inst)
             },
             "GETFIELD" => ByteCode::GETFIELD {
-                class: next(&mut split_inst),
+                object: next(&mut split_inst),
                 local: next(&mut split_inst)
             },
             "PUTFIELD" => ByteCode::PUTFIELD {
-                class: next(&mut split_inst),
+                object: next(&mut split_inst),
                 local: next(&mut split_inst)
             },
             "METHODCALL" => ByteCode::METHODCALL {

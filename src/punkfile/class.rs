@@ -26,4 +26,21 @@ impl Class {
         }
         c
     }
+
+    pub fn find_method(&self, method: &String) -> Result<&Code, &'static str> {
+        let res: Code;
+        let mut find = false;
+        for m in self.methods {
+            if m.name == *method {
+                res = m;
+                find = true;
+            }
+        }
+        if !find {
+            Err(format!("Couldn't find the method {} in the class definition", method).as_str())
+        }
+        else {
+            Ok(&res)
+        }
+    }
 }

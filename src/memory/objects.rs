@@ -7,7 +7,7 @@ pub struct Objects {
 }
 
 impl Objects {
-    pub fn get_field(&self, object: String, field: String) -> Type {
+    pub fn get_field(&self, object: &String, field: &String) -> Type {
         match self.objects.get(object.as_str()) {
             Some(cls) => match cls.get(field.as_str()) {
                 Some(v) => return v.clone(),
@@ -17,7 +17,7 @@ impl Objects {
         }
     }
 
-    pub fn set_field(&mut self, object: String, field: String, value: Type) {
+    pub fn set_field(&mut self, object: &String, field: &String, value: Type) {
         match self.objects.get_mut(object.as_str()) {
             Some(cls) => {
                 match cls.get_mut(field.as_str()) {

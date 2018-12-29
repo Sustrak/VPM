@@ -19,7 +19,7 @@ impl Field {
 
     pub fn get_type(&self) -> Type {
         match self.value.parse::<i32>() {
-            Some(i) => Type::Integer(i),
+            Ok(i) => Type::Integer(i),
             Err(_) => Type::String(self.value.clone())
         }
     }

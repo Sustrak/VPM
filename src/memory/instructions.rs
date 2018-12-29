@@ -5,6 +5,7 @@ use isa::bytecode::ByteCode;
 pub struct Instructions {
     // Map where K -> ClassMethod | V -> position where code starts
     methods: HashMap<String, usize>,
+    labels: HashMap<String, usize>,
     code: Vec<ByteCode>,
 }
 
@@ -25,6 +26,26 @@ impl Instructions {
         match self.methods.get(name) {
             Some(m) => m.clone(),
             None => panic!("The method {} doesn't exist", name)
+        }
+    }
+
+    fn get_labels(&mut self, base_pc: usize, code: &Vec<ByteCode>) {
+        let mut pc = base_pc;
+        for c in code {
+            match c {
+                ByteCode::LABEL(label) => {
+                    self.labels.insert(label.clone(), pc);
+                },
+                _ => ()
+            };
+            pc += 1;
+        }
+    }
+
+    pub fn get_label_pc(&self, label: &String) -> usize {
+        match self.labels.get(label.as_str()) {
+            Some(pc) => pc.clone(),
+            None => panic!("The label {} no exist", label)
         }
     }
 }

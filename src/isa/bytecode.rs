@@ -16,15 +16,15 @@ pub enum ByteCode {
     RETURN,
     LABEL(String),
     GOTO(String),
-    LOAD(String),
-    STORE(String),
+    LOAD(usize),
+    STORE(usize),
     CONST(String),
     IF_EQ(String),
     IF_CMPLT(String),
     IF_CMPEQ(String),
     NEW {class: String, name: String},
-    GETFIELD { class: String, local: String },
-    PUTFIELD { class: String, local: String },
+    GETFIELD { object: String, local: String },
+    PUTFIELD { object: String, local: String },
     METHODCALL { class: String, method: String },
 }
 
@@ -215,13 +215,13 @@ pub fn if_cmplt(stack: &mut StackVM, new_pc: usize) -> Result<(), &'static str> 
     }
 }
 
-pub fn getfield(stack: &mut Frame, objects: &Objects, class: String, local: usize) -> Result<(), &'static str> {
+pub fn getfield(stack: &mut Frame, objects: &Objects, class: &String, local: &String) -> Result<(), &'static str> {
     let field = objects.get_field(class, local);
     stack.push(field);
     Ok(())
 }
 
-pub fn putfield(stack: &mut Frame, objects: &mut Objects, class: String, local: String) -> Result<(), &'static str> {
+pub fn putfield(stack: &mut Frame, objects: &mut Objects, class: &String, local: &String) -> Result<(), &'static str> {
     let field = stack.pop();
     objects.set_field(class, local, field);
     Ok(())
@@ -237,7 +237,7 @@ pub fn putfield(stack: &mut Frame, objects: &mut Objects, class: String, local: 
 /// *    argN     *
 /// *-------------*
 ///
-pub fn methodcall(stack: &mut StackVM, signature: String, new_pc: usize) -> Result<(), &'static str> {
+pub fn methodcall(stack: &mut StackVM, signature: &String, new_pc: usize) -> Result<(), &'static str> {
     let n_args: usize = {
         let v: Vec<&str> = signature.split(|c| c == '(' || c == ')').collect();
         v[1].len()
