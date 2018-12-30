@@ -41,52 +41,52 @@ fn main() {
     stack.new_pc(instructions.get_method_pc("AppMain"));
 
     // Execute code
-    let mut pc: usize = stack.get_pc();
+    let mut pc: usize;
     let mut ins: &ByteCode;
-    let mut frame: &mut Frame = stack.get_frame_mut();
+    let mut frame = stack.pop_frame();
     loop {
         pc = stack.get_pc();
         ins = instructions.get_ins(pc);
 
         match ins {
             ByteCode::MUL => {
-                match bytecode::mul(frame) {
+                match bytecode::mul(&mut frame) {
                     Ok(()) => {},
                     Err(msg) => report_error(pc, msg)
                 }
             },
             ByteCode::DIV => {
-                match bytecode::div(frame) {
+                match bytecode::div(&mut frame) {
                     Ok(()) => {},
                     Err(msg) => report_error(pc, msg)
                 }
             },
             ByteCode::SUB => {
-                match bytecode::sub(frame) {
+                match bytecode::sub(&mut frame) {
                     Ok(()) => {},
                     Err(msg) => report_error(pc, msg)
                 }
             },
             ByteCode::POP => {
-                match bytecode::pop(frame) {
+                match bytecode::pop(&mut frame) {
                     Ok(()) => {},
                     Err(msg) => report_error(pc, msg)
                 }
             },
             ByteCode::IADD => {
-                match bytecode::iadd(frame) {
+                match bytecode::iadd(&mut frame) {
                     Ok(()) => {},
                     Err(msg) => report_error(pc, msg)
                 }
             },
             ByteCode::SADD => {
-                match bytecode::sadd(frame) {
+                match bytecode::sadd(&mut frame) {
                     Ok(()) => {},
                     Err(msg) => report_error(pc, msg)
                 }
             },
             ByteCode::PRINT => {
-                match bytecode::print(frame) {
+                match bytecode::print(&mut frame) {
                     Ok(()) => {},
                     Err(msg) => report_error(pc, msg)
                 }
@@ -132,17 +132,17 @@ fn main() {
                 stack.new_pc(label_pc)
             },
             ByteCode::LOAD(var) => {
-                bytecode::load(frame, var.clone());
+                bytecode::load(&mut frame, var.clone());
             },
             ByteCode::STORE(var) => {
-                bytecode::store(frame, var.clone());
+                bytecode::store(&mut frame, var.clone());
             },
             ByteCode::CONST(cst) => {
                 let t = match cst.parse::<i32>() {
                     Ok(i) => Type::Integer(i),
                     Err(_) => Type::String(cst.clone())
                 };
-                bytecode::cnst(frame, t);
+                bytecode::cnst(&mut frame, t);
             },
             ByteCode::IF_EQ(label) => {
                 let label_pc = instructions.get_label_pc(label);
@@ -163,6 +163,7 @@ fn main() {
                 bytecode::putfield(&mut frame, &mut objects, object, local);
             },
             ByteCode::METHODCALL {class, method} => {
+                stack.push_frame(frame.clone());
                 let method_name = format!("{}{}", class, method);
                 let method_pc = instructions.get_method_pc(method_name.as_str());
                 let signature = match pk.find_class(class) {
@@ -174,7 +175,7 @@ fn main() {
                   },
                   None => report_error(pc, format!("The class {} couldn't be found", class).as_str())
                 };
-                bytecode::methodcall(&mut stack, &signature, method_pc);
+                bytecode::methodcall(&mut stack, &signature, method_pc, frame.clone());
             },
             _ => ()
         };
@@ -187,7 +188,7 @@ fn main() {
         };
 
         match ins {
-            ByteCode::METHODCALL {class: _, method: _} => frame = stack.get_frame_mut(),
+            ByteCode::METHODCALL {class: _, method: _} => frame = stack.pop_frame(),
             _ => ()
         };
     }

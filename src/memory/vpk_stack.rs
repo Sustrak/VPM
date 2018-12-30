@@ -5,6 +5,7 @@ pub enum Type {
     Object(usize),
 }
 
+#[derive(Clone)]
 pub struct Frame {
     local_vars: Vec<Type>,
     stack: Vec<Type>,
@@ -82,8 +83,11 @@ impl StackVM {
         self.stack.push(f)
     }
 
-    pub fn pop_frame(&mut self) {
-        self.stack.pop();
+    pub fn pop_frame(&mut self) -> Frame {
+        match self.stack.pop() {
+            Some(f) => f,
+            None => panic!("There are no more frames to pop")
+        }
     }
 
     pub fn get_frame(&self) -> &Frame {

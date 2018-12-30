@@ -233,19 +233,14 @@ pub fn putfield(stack: &mut Frame, objects: &mut Objects, class: &String, local:
 /// *    argN     *
 /// *-------------*
 ///
-pub fn methodcall(stack: &mut StackVM, signature: &String, new_pc: usize) -> Result<(), &'static str> {
+pub fn methodcall(stack: &mut StackVM, signature: &String, new_pc: usize, mut frame: Frame) -> Result<(), &'static str> {
     let n_args: usize = {
         let v: Vec<&str> = signature.split(|c| c == '(' || c == ')').collect();
         v[1].len()
     };
     let mut new_frame: Frame = Frame::new();
-    {
-        let frame = stack.get_frame_mut();
-
-
-        for _ in 0..n_args {
-            new_frame.push_var(frame.pop())
-        }
+    for _ in 0..n_args {
+        new_frame.push_var(frame.pop())
     }
     stack.push_frame(new_frame);
     stack.methodcall_pc(new_pc);
