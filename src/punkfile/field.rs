@@ -1,5 +1,5 @@
-use punkfile::deserializer::FieldDeserialize;
-use memory::vpk_stack::Type;
+use crate::punkfile::deserializer::FieldDeserialize;
+use crate::memory::vpk_stack::Type;
 
 #[derive(Default, Debug)]
 pub struct Field {

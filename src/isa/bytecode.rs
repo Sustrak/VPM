@@ -1,5 +1,5 @@
-use memory::vpk_stack::{StackVM, Frame, Type};
-use memory::objects::Objects;
+use crate::memory::vpk_stack::{StackVM, Frame, Type};
+use crate::memory::objects::Objects;
 use std::collections::HashMap;
 
 #[allow(non_camel_case_types)]
@@ -174,11 +174,9 @@ pub fn if_eq(stack: &mut StackVM, new_pc: usize) -> Result<(), &'static str> {
 pub fn if_cmpeq(stack: &mut StackVM, new_pc: usize) -> Result<(), &'static str> {
     let v1: Type;
     let v2: Type;
-    {
-        let s = stack.get_frame_mut();
-        v2 = s.pop();
-        v1 = s.pop();
-    }
+    let s = stack.get_frame_mut();
+    v2 = s.pop();
+    v1 = s.pop();
     match (v1, v2) {
         (Type::Integer(x1), Type::Integer(x2)) => {
             if x1 == x2 {
@@ -199,11 +197,9 @@ pub fn if_cmpeq(stack: &mut StackVM, new_pc: usize) -> Result<(), &'static str> 
 pub fn if_cmplt(stack: &mut StackVM, new_pc: usize) -> Result<(), &'static str> {
     let v1: Type;
     let v2: Type;
-    {
-        let s = stack.get_frame_mut();
-        v2 = s.pop();
-        v1 = s.pop();
-    }
+    let s = stack.get_frame_mut();
+    v2 = s.pop();
+    v1 = s.pop();
     match (v1, v2) {
         (Type::Integer(x1), Type::Integer(x2)) => {
             if x1 < x2 {

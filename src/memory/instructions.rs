@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use isa::bytecode::ByteCode;
+use crate::isa::bytecode::ByteCode;
 
 #[derive(Default)]
 pub struct Instructions {

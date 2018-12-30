@@ -112,8 +112,11 @@ impl StackVM {
         }
     }
 
-    pub fn inc_pc(&mut self) -> usize {
+    pub fn inc_pc(&mut self) {
         self.pc += 1;
+    }
+
+    pub fn get_pc(&self) -> usize {
         self.pc
     }
 

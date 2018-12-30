@@ -1,5 +1,5 @@
-use punkfile::code::Code;
-use isa::bytecode::ByteCode;
+use crate::punkfile::code::Code;
+use crate::isa::bytecode::ByteCode;
 
 #[derive(Default, Debug)]
 pub struct Main {

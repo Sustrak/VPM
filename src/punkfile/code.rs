@@ -1,5 +1,5 @@
-use punkfile::deserializer::CodeDeserialize;
-use isa::bytecode::ByteCode;
+use crate::punkfile::deserializer::CodeDeserialize;
+use crate::isa::bytecode::ByteCode;
 use std::str::SplitWhitespace;
 
 #[derive(Default, Debug)]

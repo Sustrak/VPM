@@ -1,6 +1,6 @@
-use punkfile::class::Class;
-use punkfile::main::Main;
-use punkfile::deserializer::PunkFileJSON;
+use crate::punkfile::class::Class;
+use crate::punkfile::main::Main;
+use crate::punkfile::deserializer::PunkFileJSON;
 
 const MAGIC_NUMBER: &str =  "CAFECAFE";
 
@@ -25,20 +25,7 @@ impl PunkFile {
         pk
     }
 
-    pub fn find_class(&self, name: &String) -> Result<&Class, &'static str> {
-        let cls: Class;
-        let mut find = false;
-        for c in self.classes {
-            if c.this == *name {
-                cls = c;
-                find = true;
-            }
-        }
-        if !find {
-            Err(format!("Couldn't find the class {} in the constant pool", name).as_str())
-        }
-        else {
-            Ok(&cls)
-        }
+    pub fn find_class(&self, name: &str) -> Option<&Class> {
+        self.classes.iter().find(|c| c.this == name.to_string())
     }
 }

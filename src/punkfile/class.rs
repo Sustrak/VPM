@@ -1,7 +1,7 @@
-use punkfile::constant_pool::ConstantPool;
-use punkfile::code::Code;
-use punkfile::deserializer::ClassDeserialize;
-use punkfile::field::Field;
+use crate::punkfile::constant_pool::ConstantPool;
+use crate::punkfile::code::Code;
+use crate::punkfile::deserializer::ClassDeserialize;
+use crate::punkfile::field::Field;
 
 #[derive(Default, Debug)]
 pub struct Class {
@@ -27,20 +27,7 @@ impl Class {
         c
     }
 
-    pub fn find_method(&self, method: &String) -> Result<&Code, &'static str> {
-        let res: Code;
-        let mut find = false;
-        for m in self.methods {
-            if m.name == *method {
-                res = m;
-                find = true;
-            }
-        }
-        if !find {
-            Err(format!("Couldn't find the method {} in the class definition", method).as_str())
-        }
-        else {
-            Ok(&res)
-        }
+    pub fn find_method(&self, method: &str) -> Option<&Code> {
+        self.methods.iter().find(|m| m.name == method.to_string())
     }
 }
