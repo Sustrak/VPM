@@ -8,10 +8,11 @@
       "methods": [
         {
           "name": "hello_world",
-          "descriptor": "()V",
+          "descriptor": "(I)I",
           "code": [
-            "CONST HELLO-WORLD-FROM-A-FUNCTION",
-            "PRINT",
+            "LOAD 0",
+            "CONST 1",
+            "IADD",
             "RETURN"
           ]
         }
@@ -22,7 +23,9 @@
     "NEW A OBJ-A",
     "CONST CREATED",
     "PRINT",
+    "CONST 1",
     "METHODCALL A hello_world",
+    "PRINT",
     "RETURN"
   ]
 }

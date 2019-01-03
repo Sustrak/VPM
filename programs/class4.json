@@ -4,14 +4,19 @@
     {
       "this": "A",
       "super": "A",
-      "fields": [],
+      "fields": [
+        {
+          "name": "name",
+          "descriptor": "S",
+          "value": "Josep"
+        }
+      ],
       "methods": [
         {
-          "name": "hello_world",
-          "descriptor": "()V",
+          "name": "my_name",
+          "descriptor": "()S",
           "code": [
-            "CONST HELLO-WORLD-FROM-A-FUNCTION",
-            "PRINT",
+            "GETFIELD OBJ-A name",
             "RETURN"
           ]
         }
@@ -22,7 +27,8 @@
     "NEW A OBJ-A",
     "CONST CREATED",
     "PRINT",
-    "METHODCALL A hello_world",
+    "METHODCALL A my_name",
+    "PRINT",
     "RETURN"
   ]
 }

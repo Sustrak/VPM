@@ -121,6 +121,7 @@ pub fn ret(stack: &mut StackVM, frame: &mut Frame) -> Result<bool, &'static str>
             let mut callee_frame = stack.get_frame_mut();
             callee_frame.push(ret)
         }
+        stack.ret_pc();
         return Ok(false)
     }
     else { Ok(true) }
@@ -140,12 +141,12 @@ pub fn goto(stack: &mut StackVM, new_pc: usize) -> Result<(), &'static str> {
 }
 
 pub fn load(stack: &mut Frame, local: usize) -> Result<(), &'static str> {
-    stack.store_var(local);
+    stack.load_var(local);
     Ok(())
 }
 
 pub fn store(stack: &mut Frame, local: usize) -> Result<(), &'static str> {
-    stack.load_var(local);
+    stack.store_var(local);
     Ok(())
 }
 

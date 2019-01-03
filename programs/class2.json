@@ -8,10 +8,9 @@
       "methods": [
         {
           "name": "hello_world",
-          "descriptor": "()V",
+          "descriptor": "()S",
           "code": [
-            "CONST HELLO-WORLD-FROM-A-FUNCTION",
-            "PRINT",
+            "CONST THIS-IS-A-STRING-RETURNED-FORM-FUNCTION",
             "RETURN"
           ]
         }
@@ -23,6 +22,7 @@
     "CONST CREATED",
     "PRINT",
     "METHODCALL A hello_world",
+    "PRINT",
     "RETURN"
   ]
 }

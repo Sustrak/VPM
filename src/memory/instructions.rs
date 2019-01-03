@@ -4,9 +4,9 @@ use crate::isa::bytecode::ByteCode;
 #[derive(Default)]
 pub struct Instructions {
     // Map where K -> ClassMethod | V -> position where code starts
-    methods: HashMap<String, usize>,
-    labels: HashMap<String, usize>,
-    code: Vec<ByteCode>,
+    pub methods: HashMap<String, usize>,
+    pub labels: HashMap<String, usize>,
+    pub code: Vec<ByteCode>,
 }
 
 impl Instructions {

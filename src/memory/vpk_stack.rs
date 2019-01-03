@@ -1,11 +1,11 @@
-#[derive(Eq, PartialEq, Clone)]
+#[derive(Eq, PartialEq, Clone, Debug)]
 pub enum Type {
     Integer(i32),
     String(String),
     Object(usize),
 }
 
-#[derive(Eq, PartialEq, Clone)]
+#[derive(Eq, PartialEq, Clone, Debug)]
 pub enum RetType {
     Integer,
     String,
@@ -13,17 +13,18 @@ pub enum RetType {
     Void
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Frame {
     local_vars: Vec<Type>,
     stack: Vec<Type>,
     ret_type: RetType
 }
 
+#[derive(Debug)]
 pub struct StackVM {
     stack: Vec<Frame>,
     ret_addr: Vec<usize>,
-    pc: usize
+    pc: usize,
 }
 
 impl RetType {
@@ -50,7 +51,7 @@ impl Frame {
     Will get the top value of the stack and store it in the local variable
     */
     pub fn store_var(&mut self, i: usize) {
-        let index = i - 1;
+        let index = i;
         if self.local_vars.len() < index {
             let res = index - self.local_vars.len();
             self.local_vars.reserve(res);
@@ -67,7 +68,7 @@ impl Frame {
     Will get the local variable in index i and push it at the top of the stack
     */
     pub fn load_var(&mut self, i: usize) {
-        let index = i - 1;
+        let index = i;
         let var = match self.local_vars.get(index) {
             Some(x) => x.clone(),
             None => panic!("There's no localVariable in {}", i)
@@ -139,7 +140,7 @@ impl StackVM {
     }
 
     pub fn methodcall_pc(&mut self, new_pc: usize) {
-        self.ret_addr.push(self.pc);
+        self.ret_addr.push(self.pc+1);
         self.pc = new_pc
     }
 
