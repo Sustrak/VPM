@@ -1,11 +1,9 @@
-use crate::punkfile::constant_pool::ConstantPool;
 use crate::punkfile::code::Code;
 use crate::punkfile::deserializer::ClassDeserialize;
 use crate::punkfile::field::Field;
 
 #[derive(Default, Debug)]
 pub struct Class {
-    pub constant_pool: ConstantPool,
     pub this: String,
     pub super_cls: String,
     pub fields: Vec<Field>,
@@ -15,7 +13,6 @@ pub struct Class {
 impl Class {
     pub fn new(cls: ClassDeserialize) -> Class {
         let mut c: Class = Default::default();
-        c.constant_pool = ConstantPool::new(&cls.constant_pool);
         c.this = cls.this;
         c.super_cls = cls.super_cls;
         for field in cls.fields {

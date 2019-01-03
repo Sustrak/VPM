@@ -1,0 +1,15 @@
+{
+  "magic_number": "CAFECAFE",
+  "classes": [],
+  "main_code": [
+    "CONST THIS",
+    "CONST IS",
+    "SADD",
+    "CONST A",
+    "SADD",
+    "CONST STRING",
+    "SADD",
+    "PRINT",
+    "RETURN"
+  ]
+}

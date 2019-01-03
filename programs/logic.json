@@ -1,0 +1,29 @@
+{
+  "magic_number": "CAFECAFE",
+  "classes": [],
+  "main_code": [
+    "CONST 0",
+    "IF_EQ L1",
+    "CONST ERROR1",
+    "PRINT",
+    "RETURN",
+    "LABEL L1",
+    "CONST 1",
+    "CONST 1",
+    "IF_CMPEQ L2",
+    "CONST ERROR2",
+    "PRINT",
+    "RETURN",
+    "LABEL L2",
+    "CONST 1",
+    "CONST 2",
+    "IF_CMPLT L3",
+    "CONST ERROR3",
+    "PRINT",
+    "RETURN",
+    "LABEL L3",
+    "CONST ALL-WENT-WELL-:D",
+    "PRINT",
+    "RETURN"
+  ]
+}

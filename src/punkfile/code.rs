@@ -12,8 +12,8 @@ pub struct Code {
 impl Code {
     pub fn new(c: CodeDeserialize) -> Code {
         let mut code: Code = Default::default();
-        code.name = c.name_index;
-        code.desc = c.descriptor_index;
+        code.name = c.name;
+        code.desc = c.descriptor;
 
         for ins in c.code {
             let mut split_inst = ins.split_whitespace();

@@ -1,0 +1,17 @@
+{
+  "magic_number": "CAFECAFE",
+  "classes": [
+    {
+      "this": "A",
+      "super": "A",
+      "fields": [],
+      "methods": []
+    }
+  ],
+  "main_code": [
+    "NEW A OBJ-A",
+    "CONST CREATED",
+    "PRINT",
+    "RETURN"
+  ]
+}

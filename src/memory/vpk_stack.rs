@@ -5,10 +5,19 @@ pub enum Type {
     Object(usize),
 }
 
+#[derive(Eq, PartialEq, Clone)]
+pub enum RetType {
+    Integer,
+    String,
+    Object,
+    Void
+}
+
 #[derive(Clone)]
 pub struct Frame {
     local_vars: Vec<Type>,
     stack: Vec<Type>,
+    ret_type: RetType
 }
 
 pub struct StackVM {
@@ -17,11 +26,24 @@ pub struct StackVM {
     pc: usize
 }
 
+impl RetType {
+    pub fn get_type(s: &str) -> RetType {
+        match s {
+            "I" => RetType::Integer,
+            "S" => RetType::String,
+            "O" => RetType::Object,
+            "V" => RetType::Void,
+            _ => panic!("The type {} is not a valid return type", s)
+        }
+    }
+}
+
 impl Frame {
     pub fn new() -> Frame {
         Frame {
             local_vars: Vec::new(),
-            stack: Vec::new()
+            stack: Vec::new(),
+            ret_type: RetType::Void
         }
     }
     /**
@@ -58,6 +80,10 @@ impl Frame {
         self.local_vars.push(var)
     }
 
+    pub fn pop_option(&mut self) -> Option<Type> {
+        self.stack.pop()
+    }
+
     pub fn pop(&mut self) -> Type {
         match self.stack.pop() {
             Some(x) => x,
@@ -67,6 +93,14 @@ impl Frame {
 
     pub fn push(&mut self, t: Type) {
         self.stack.push(t)
+    }
+
+    pub fn set_ret_type(&mut self, t: RetType) {
+        self.ret_type = t;
+    }
+
+    pub fn get_ret_type(&self) -> &RetType {
+        &self.ret_type
     }
 }
 

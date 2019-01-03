@@ -1,4 +1,4 @@
-use crate::memory::vpk_stack::{StackVM, Frame, Type};
+use crate::memory::vpk_stack::{StackVM, Frame, Type, RetType};
 use crate::memory::objects::Objects;
 use std::collections::HashMap;
 
@@ -90,8 +90,8 @@ pub fn iadd(frame: &mut Frame) -> Result<(), &'static str> {
 }
 
 pub fn sadd(frame: &mut Frame) -> Result<(), &'static str> {
-    let x = frame.pop();
     let y = frame.pop();
+    let x = frame.pop();
 
     match (x, y) {
         (Type::String(xx), Type::String(yy)) => {
@@ -113,15 +113,17 @@ pub fn print(frame: &mut Frame) -> Result<(), &'static str> {
     }
 }
 
-pub fn ret(stack: &mut StackVM) -> Result<(), &'static str> {
-    let result = stack.get_frame_mut().pop();
-    // Delete the function frame
-    stack.pop_frame();
-    // Push the return to the top of the stack of the callee
-    stack.get_frame_mut().push(result);
-    // Set the new pc
-    stack.ret_pc();
-    Ok(())
+pub fn ret(stack: &mut StackVM, frame: &mut Frame) -> Result<bool, &'static str> {
+    if !stack.is_empty() {
+        let ret_type = frame.get_ret_type();
+        if *ret_type != RetType::Void {
+            let ret = frame.pop();
+            let mut callee_frame = stack.get_frame_mut();
+            callee_frame.push(ret)
+        }
+        return Ok(false)
+    }
+    else { Ok(true) }
 
 }
 
@@ -152,14 +154,14 @@ pub fn cnst(stack: &mut Frame, con: Type) -> Result<(), &'static str> {
     Ok(())
 }
 
-pub fn if_eq(stack: &mut StackVM, new_pc: usize) -> Result<(), &'static str> {
-    let v = stack.get_frame_mut().pop();
+pub fn if_eq(frame: &mut Frame) -> Result<bool, &'static str> {
+    let v = frame.pop();
     match v {
         Type::Integer(x) => {
             if x == 0 {
-                stack.new_pc(new_pc)
+                return Ok(true)
             }
-            Ok(())
+            Ok(false)
         }
         _ => Err("Can't compare when the value is not a integer")
     }
@@ -171,18 +173,15 @@ pub fn if_eq(stack: &mut StackVM, new_pc: usize) -> Result<(), &'static str> {
 /// *     v1      *
 /// *     v2      *
 /// *-------------*
-pub fn if_cmpeq(stack: &mut StackVM, new_pc: usize) -> Result<(), &'static str> {
-    let v1: Type;
-    let v2: Type;
-    let s = stack.get_frame_mut();
-    v2 = s.pop();
-    v1 = s.pop();
+pub fn if_cmpeq(frame: &mut Frame) -> Result<bool, &'static str> {
+    let v2 = frame.pop();
+    let v1 = frame.pop();
     match (v1, v2) {
         (Type::Integer(x1), Type::Integer(x2)) => {
             if x1 == x2 {
-                stack.new_pc(new_pc)
+                return Ok(true)
             }
-            Ok(())
+            Ok(false)
         }
         _ => Err("Can't compare when the value is not a integer")
     }
@@ -194,18 +193,15 @@ pub fn if_cmpeq(stack: &mut StackVM, new_pc: usize) -> Result<(), &'static str> 
 /// *     v1      *
 /// *     v2      *
 /// *-------------*
-pub fn if_cmplt(stack: &mut StackVM, new_pc: usize) -> Result<(), &'static str> {
-    let v1: Type;
-    let v2: Type;
-    let s = stack.get_frame_mut();
-    v2 = s.pop();
-    v1 = s.pop();
+pub fn if_cmplt(frame: &mut Frame) -> Result<bool, &'static str> {
+    let v2 = frame.pop();
+    let v1 = frame.pop();
     match (v1, v2) {
         (Type::Integer(x1), Type::Integer(x2)) => {
             if x1 < x2 {
-                stack.new_pc(new_pc)
+                return Ok(true)
             }
-            Ok(())
+            Ok(false)
         }
         _ => Err("Can't compare when the value is not a integer")
     }
@@ -234,11 +230,10 @@ pub fn putfield(stack: &mut Frame, objects: &mut Objects, class: &String, local:
 /// *-------------*
 ///
 pub fn methodcall(stack: &mut StackVM, signature: &String, new_pc: usize, mut frame: Frame) -> Result<(), &'static str> {
-    let n_args: usize = {
-        let v: Vec<&str> = signature.split(|c| c == '(' || c == ')').collect();
-        v[1].len()
-    };
+    let v: Vec<&str> = signature.split(|c| c == '(' || c == ')').collect();
+    let n_args: usize = v[1].len();
     let mut new_frame: Frame = Frame::new();
+    new_frame.set_ret_type(RetType::get_type(v[2]));
     for _ in 0..n_args {
         new_frame.push_var(frame.pop())
     }

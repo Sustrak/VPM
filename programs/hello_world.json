@@ -1,0 +1,9 @@
+{
+  "magic_number": "CAFECAFE",
+  "classes": [],
+  "main_code": [
+    "CONST HELLOWORLD",
+    "PRINT",
+    "RETURN"
+  ]
+}

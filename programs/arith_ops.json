@@ -1,0 +1,23 @@
+ {
+   "magic_number": "CAFECAFE",
+   "classes": [],
+   "main_code": [
+     "CONST 2",
+     "CONST 2",
+     "IADD",
+     "PRINT",
+     "CONST 2",
+     "CONST 2",
+     "SUB",
+     "PRINT",
+     "CONST 2",
+     "CONST 2",
+     "MUL",
+     "PRINT",
+     "CONST 2",
+     "CONST 2",
+     "DIV",
+     "PRINT",
+     "RETURN"
+   ]
+ }

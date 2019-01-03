@@ -11,8 +11,8 @@ pub struct Field {
 impl Field {
     pub fn new(fd: FieldDeserialize) -> Field {
         Field {
-            name: fd.name_index,
-            desc: fd.descriptor_index,
+            name: fd.name,
+            desc: fd.descriptor,
             value: fd.value
         }
     }

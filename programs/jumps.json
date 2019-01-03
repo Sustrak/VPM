@@ -1,0 +1,13 @@
+{
+  "magic_number": "CAFECAFE",
+  "classes": [],
+  "main_code": [
+    "CONST HELLO-WORLD-I-JUMPED",
+    "GOTO JUMP",
+    "CONST I-DID-NOT-JUMP",
+    "PRINT",
+    "LABEL JUMP",
+    "PRINT",
+    "RETURN"
+  ]
+}

@@ -11,7 +11,9 @@ pub struct Instructions {
 
 impl Instructions {
     pub fn new_method(&mut self, name: String, code: &mut Vec<ByteCode>) {
-        self.methods.insert(name, self.code.len());
+        let method_pc = self.code.len();
+        self.methods.insert(name, method_pc);
+        self.get_labels(method_pc, code);
         self.code.append(code);
     }
 

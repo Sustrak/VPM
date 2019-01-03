@@ -12,13 +12,18 @@ use crate::memory::instructions::Instructions;
 use crate::isa::bytecode::ByteCode;
 use crate::isa::bytecode;
 use std::collections::HashMap;
+use std::env::args;
 
 fn main() {
     // Data structures
     let mut objects: Objects = Default::default();
     let mut stack: StackVM = StackVM::new();
     let mut instructions: Instructions = Default::default();
-    let pk: PunkFile = PunkFile::from_file("scheme.json");
+    let file_path = match args().nth(1) {
+        Some(path) => path,
+        None => panic!("Usage: vpk <some_file.json>")
+    };
+    let pk: PunkFile = PunkFile::from_file(file_path.as_str());
 
     // Initialize code structure
     for cls in pk.classes.iter() {
@@ -92,14 +97,14 @@ fn main() {
                 }
             },
             ByteCode::RETURN => {
-                match bytecode::ret(&mut stack) {
-                    Ok(()) => {},
+                match bytecode::ret(&mut stack, &mut frame) {
+                    Ok(b) => {
+                        if b {
+                            // If there's no more frames the execution of the program should be done
+                            break;
+                        }
+                    },
                     Err(msg) => report_error(pc, msg)
-                }
-
-                // If there's no more frames the execution of the program should be done
-                if stack.is_empty() {
-                    break
                 }
             },
             ByteCode::NEW {class, name} => {
@@ -129,7 +134,8 @@ fn main() {
             },
             ByteCode::GOTO(label) => {
                 let label_pc = instructions.get_label_pc(label);
-                stack.new_pc(label_pc)
+                bytecode::goto(&mut stack, label_pc);
+                //stack.new_pc(label_pc)
             },
             ByteCode::LOAD(var) => {
                 bytecode::load(&mut frame, var.clone());
@@ -146,15 +152,45 @@ fn main() {
             },
             ByteCode::IF_EQ(label) => {
                 let label_pc = instructions.get_label_pc(label);
-                bytecode::if_eq(&mut stack, label_pc);
+                match bytecode::if_eq(&mut frame) {
+                    Ok(b) => {
+                        if b {
+                            stack.new_pc(label_pc)
+                        }
+                        else {
+                            stack.inc_pc();
+                        }
+                    },
+                    Err(msg) => report_error(pc, msg)
+                }
             },
             ByteCode::IF_CMPLT(label) => {
                 let label_pc = instructions.get_label_pc(label);
-                bytecode::if_cmplt(&mut stack, label_pc);
+                match bytecode::if_cmplt(&mut frame) {
+                    Ok(b) => {
+                        if b {
+                            stack.new_pc(label_pc)
+                        }
+                        else {
+                            stack.inc_pc();
+                        }
+                    },
+                    Err(msg) => report_error(pc, msg)
+                }
             },
             ByteCode::IF_CMPEQ(label) => {
                 let label_pc = instructions.get_label_pc(label);
-                bytecode::if_cmpeq(&mut stack, label_pc);
+                match bytecode::if_cmpeq(&mut frame) {
+                    Ok(b) => {
+                        if b {
+                            stack.new_pc(label_pc)
+                        }
+                        else {
+                            stack.inc_pc();
+                        }
+                    },
+                    Err(msg) => report_error(pc, msg)
+                }
             },
             ByteCode::GETFIELD {object, local} => {
                 bytecode::getfield(&mut frame, &objects, object, local);
@@ -188,7 +224,7 @@ fn main() {
         };
 
         match ins {
-            ByteCode::METHODCALL {class: _, method: _} => frame = stack.pop_frame(),
+            ByteCode::METHODCALL {class: _, method: _} | ByteCode::RETURN => frame = stack.pop_frame(),
             _ => ()
         };
     }

@@ -10,7 +10,6 @@ pub struct PunkFileJSON {
 
 #[derive(Deserialize)]
 pub struct ClassDeserialize {
-    pub constant_pool: Vec<Value>,
     pub this: String,
     #[serde(rename = "super")]
     pub super_cls: String,
@@ -20,15 +19,15 @@ pub struct ClassDeserialize {
 
 #[derive(Deserialize)]
 pub struct CodeDeserialize {
-    pub name_index: String,
-    pub descriptor_index: String,
+    pub name: String,
+    pub descriptor: String,
     pub code: Vec<String>
 }
 
 #[derive(Deserialize)]
 pub struct FieldDeserialize {
-    pub name_index: String,
-    pub descriptor_index: String,
+    pub name: String,
+    pub descriptor: String,
     pub value: String
 }
 
