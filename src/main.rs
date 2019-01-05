@@ -14,6 +14,10 @@ use crate::isa::bytecode;
 use std::collections::HashMap;
 use std::env::args;
 
+fn usage() -> ! {
+    panic!("Usage: vpk <some_file.json>")
+}
+
 fn main() {
     // Data structures
     let mut objects: Objects = Default::default();
@@ -31,7 +35,7 @@ fn main() {
 
         for m in cls.methods.iter() {
             let mthd_name = &m.name;
-            let name = format!("{}{}", cls_name, mthd_name);
+            let name = format!("{}/{}", cls_name, mthd_name);
             let mut code = m.code.to_owned();
             instructions.new_method(name, &mut code)
         }
@@ -111,7 +115,7 @@ fn main() {
                     Err(msg) => report_error(pc, msg)
                 }
             },
-            ByteCode::NEW {class, name} => {
+            ByteCode::NEW {class} => {
                 // Search the class in the constant pool
                 let cls = match pk.find_class(class) {
                     Some(c) => c,
@@ -134,7 +138,7 @@ fn main() {
                 }
 
                 // Create object
-                bytecode::new(&mut objects, name.clone(), fields);
+                bytecode::new(&mut objects, &mut frame, class, fields);
             },
             ByteCode::GOTO(label) => {
                 let label_pc = instructions.get_label_pc(label);
@@ -196,39 +200,32 @@ fn main() {
                     Err(msg) => report_error(pc, msg)
                 }
             },
-            ByteCode::GETFIELD {object, local} => {
-                bytecode::getfield(&mut frame, &objects, object, local);
+            ByteCode::GETFIELD {field} => {
+                bytecode::getfield(&mut frame, &objects, field);
             },
-            ByteCode::PUTFIELD {object, local} => {
-                bytecode::putfield(&mut frame, &mut objects, object, local);
+            ByteCode::PUTFIELD {field} => {
+                bytecode::putfield(&mut frame, &mut objects, field);
             },
-            ByteCode::METHODCALL {class, method} => {
+            ByteCode::METHODCALL {method} => {
                 stack.push_frame(frame.clone());
-                let method_name = format!("{}{}", class, method);
-                let method_pc = instructions.get_method_pc(method_name.as_str());
-                let signature = match pk.find_class(class) {
-                  Some(c) => {
-                      match c.find_method(method) {
-                          Some(m) => m.desc.clone(),
-                          None => report_error(pc, format!("The method {} in class {} couldn't be found", method, class).as_str())
-                      }
-                  },
-                  None => report_error(pc, format!("The class {} couldn't be found", class).as_str())
-                };
-                bytecode::methodcall(&mut stack, &signature, method_pc, frame.clone());
+                let method_pc = instructions.get_method_pc(method.as_str());
+                let v: Vec<&str> = method.split('/').collect();
+                let class = v[0];
+                let method_name = v[1];
+                bytecode::methodcall(&mut stack, &pk, method_pc, class, method_name);
             },
             _ => ()
         };
 
         match ins {
-            ByteCode::GOTO(_) | ByteCode::IF_EQ(_) | ByteCode::IF_CMPEQ(_) | ByteCode::IF_CMPLT(_) | ByteCode::METHODCALL {class: _, method: _} | ByteCode::RETURN => (),
+            ByteCode::GOTO(_) | ByteCode::IF_EQ(_) | ByteCode::IF_CMPEQ(_) | ByteCode::IF_CMPLT(_) | ByteCode::METHODCALL {method: _} | ByteCode::RETURN => (),
             _ => {
                 stack.inc_pc();
             }
         };
 
         match ins {
-            ByteCode::METHODCALL {class: _, method: _} | ByteCode::RETURN => {
+            ByteCode::METHODCALL {method: _} | ByteCode::RETURN => {
                 frame = stack.pop_frame()
             },
             _ => ()

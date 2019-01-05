@@ -1,6 +1,7 @@
 use crate::memory::vpk_stack::{StackVM, Frame, Type, RetType};
 use crate::memory::objects::Objects;
 use std::collections::HashMap;
+use crate::punkfile::punk_file::PunkFile;
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone)]
@@ -22,10 +23,10 @@ pub enum ByteCode {
     IF_EQ(String),
     IF_CMPLT(String),
     IF_CMPEQ(String),
-    NEW {class: String, name: String},
-    GETFIELD { object: String, local: String },
-    PUTFIELD { object: String, local: String },
-    METHODCALL { class: String, method: String },
+    NEW { class: String },
+    GETFIELD { field: String },
+    PUTFIELD { field: String },
+    METHODCALL { method: String },
 }
 
 pub fn mul(frame: &mut Frame) -> Result<(), &'static str> {
@@ -52,7 +53,7 @@ pub fn div(frame: &mut Frame) -> Result<(), &'static str> {
             frame.push(t);
             Ok(())
         },
-        _ => Err("Only the multiplication of integer is supported")
+        _ => Err("Only the division of integer is supported")
     }
 }
 
@@ -66,7 +67,7 @@ pub fn sub(frame: &mut Frame) -> Result<(), &'static str> {
             frame.push(t);
             Ok(())
         },
-        _ => Err("Only the multiplication of integer is supported")
+        _ => Err("Only the subtraction of integer is supported")
     }
 }
 
@@ -85,7 +86,7 @@ pub fn iadd(frame: &mut Frame) -> Result<(), &'static str> {
             frame.push(t);
             Ok(())
         },
-        _ => Err("Only the multiplication of integer is supported")
+        _ => Err("Only the addition of integer is supported")
     }
 }
 
@@ -99,7 +100,22 @@ pub fn sadd(frame: &mut Frame) -> Result<(), &'static str> {
             frame.push(t);
             Ok(())
         },
-        _ => Err("Only the multiplication of integer is supported")
+        (Type::String(xx), Type::Integer(yy)) => {
+            let t = Type::String(format!("{}{}", xx, yy));
+            frame.push(t);
+            Ok(())
+        },
+        (Type::Integer(xx), Type::Integer(yy)) => {
+            let t = Type::String(format!("{}{}", xx, yy));
+            frame.push(t);
+            Ok(())
+        },
+        (Type::Integer(xx), Type::String(yy)) => {
+            let t = Type::String(format!("{}{}", xx, yy));
+            frame.push(t);
+            Ok(())
+        },
+        _ => Err("Can not construct an string with an object")
     }
 }
 
@@ -109,27 +125,34 @@ pub fn print(frame: &mut Frame) -> Result<(), &'static str> {
     match x {
         Type::Integer(x) => {println!("{}", x); Ok(())},
         Type::String(x) => {println!("{}", x); Ok(())},
-        Type::Object(_) => {Err("Printing an object is not supported")},
+        Type::Object(_) => Err("Printing an object is not supported"),
     }
 }
 
+/**
+Will return true if the execution of the program has to stop because there are no more Frames on the VMStack
+in the other way will return false.
+It will report an error if necessary
+*/
 pub fn ret(stack: &mut StackVM, frame: &mut Frame) -> Result<bool, &'static str> {
-    if !stack.is_empty() {
+    if stack.is_empty() {
+        Ok(true)
+    }
+    else {
         let ret_type = frame.get_ret_type();
-        if *ret_type != RetType::Void {
+        if ret_type != RetType::Void {
             let ret = frame.pop();
-            let mut callee_frame = stack.get_frame_mut();
-            callee_frame.push(ret)
+            let mut caller_frame = stack.get_frame_mut();
+            caller_frame.push(ret)
         }
         stack.ret_pc();
-        return Ok(false)
+        Ok(false)
     }
-    else { Ok(true) }
-
 }
 
-pub fn new(objects: &mut Objects, object: String, fields: HashMap<String, Type>) -> Result<(), &'static str> {
-    objects.new_object(object, fields);
+pub fn new(objects: &mut Objects, frame: &mut Frame, object: &String, fields: HashMap<String, Type>) -> Result<(), &'static str> {
+    let reff = objects.new_object(object, fields);
+    frame.push(Type::Object(reff));
     Ok(())
 }
 
@@ -208,39 +231,70 @@ pub fn if_cmplt(frame: &mut Frame) -> Result<bool, &'static str> {
     }
 }
 
-pub fn getfield(stack: &mut Frame, objects: &Objects, class: &String, local: &String) -> Result<(), &'static str> {
-    let field = objects.get_field(class, local);
+/// *-------------*            *-------------*
+/// *    STACK    *            *    STACK    *
+/// *-------------*            *-------------*
+/// *    value    *    --->    *             *
+/// *    obj.ref  *            *             *
+/// *-------------*            *-------------*
+pub fn getfield(stack: &mut Frame, objects: &Objects, field: &String) -> Result<(), &'static str> {
+    let object= match stack.pop() {
+        Type::Object(obj) => obj,
+        x => return Err("A object reference was expected")
+    };
+    let field = objects.get_field(object, field);
     stack.push(field);
     Ok(())
 }
 
-pub fn putfield(stack: &mut Frame, objects: &mut Objects, class: &String, local: &String) -> Result<(), &'static str> {
-    let field = stack.pop();
-    objects.set_field(class, local, field);
+/// *-------------*            *-------------*
+/// *    STACK    *            *    STACK    *
+/// *-------------*            *-------------*
+/// *    obj.ref  *    --->    *    value    *
+/// *-------------*            *-------------*
+pub fn putfield(stack: &mut Frame, objects: &mut Objects, field: &String) -> Result<(), &'static str> {
+    let value = stack.pop();
+    let object= match stack.pop() {
+        Type::Object(obj) => obj,
+        x => return Err("A object reference was expected")
+    };
+    objects.set_field(object, field, value);
     Ok(())
 }
 
 /// A new frame will be created and all the parameters will be stored in local variables in the order of the signature
-/// *-------------*
-/// *    STACK    *
-/// *-------------*
-/// *    arg0     *
-/// *    arg1     *
-/// *    ....     *
-/// *    argN     *
-/// *-------------*
-///
-pub fn methodcall(stack: &mut StackVM, signature: &String, new_pc: usize, mut frame: Frame) -> Result<(), &'static str> {
+/// *-------------*            *-------------*
+/// *    STACK    *            *     VARS    *
+/// *-------------*            *-------------*
+/// *   obj.ref.  *            *   obj.ref.  * 0
+/// *    arg0     *            *    arg0     * 1
+/// *    arg1     *            *    arg1     * 2
+/// *    ....     *    --->    *    ....     * ...
+/// *    argN     *            *    argN     * N
+/// *-------------*            *-------------*
+pub fn methodcall(stack: &mut StackVM, punk_file: &PunkFile, new_pc: usize, class: &str, method: &str) -> Result<(), &'static str> {
+    let signature = match punk_file.find_class(class) {
+        Some(c) => {
+            match c.find_method(method) {
+                Some(m) => m.desc.clone(),
+                None => return Err("The method couldn't be found")
+            }
+        },
+        None => return Err("The class couldn't be found")
+    };
     let v: Vec<&str> = signature.split(|c| c == '(' || c == ')').collect();
     let n_args: usize = v[1].len();
     let mut new_frame: Frame = Frame::new();
-    new_frame.set_ret_type(RetType::get_type(v[2]));
+    let mut caller_frame = stack.get_frame_mut();
+    let obj_ref = match caller_frame.pop() {
+        Type::Object(obj) => obj,
+        _ => return Err("Expected a object reference. Stack malformed")
+    };
     for _ in 0..n_args {
-        new_frame.push_var(frame.pop())
+        new_frame.push_var(caller_frame.pop())
     }
     stack.push_frame(new_frame);
     stack.methodcall_pc(new_pc);
-
     Ok(())
 }
 
