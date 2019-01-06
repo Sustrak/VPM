@@ -240,7 +240,7 @@ pub fn if_cmplt(frame: &mut Frame) -> Result<bool, &'static str> {
 pub fn getfield(stack: &mut Frame, objects: &Objects, field: &String) -> Result<(), &'static str> {
     let object= match stack.pop() {
         Type::Object(obj) => obj,
-        x => return Err("A object reference was expected")
+        _ => return Err("A object reference was expected")
     };
     let field = objects.get_field(object, field);
     stack.push(field);
@@ -256,7 +256,7 @@ pub fn putfield(stack: &mut Frame, objects: &mut Objects, field: &String) -> Res
     let value = stack.pop();
     let object= match stack.pop() {
         Type::Object(obj) => obj,
-        x => return Err("A object reference was expected")
+        _ => return Err("A object reference was expected")
     };
     objects.set_field(object, field, value);
     Ok(())
@@ -287,9 +287,10 @@ pub fn methodcall(stack: &mut StackVM, punk_file: &PunkFile, new_pc: usize, clas
     let mut new_frame: Frame = Frame::new();
     let mut caller_frame = stack.get_frame_mut();
     let obj_ref = match caller_frame.pop() {
-        Type::Object(obj) => obj,
+        Type::Object(obj) => Type::Object(obj),
         _ => return Err("Expected a object reference. Stack malformed")
     };
+    new_frame.push_var(obj_ref);
     for _ in 0..n_args {
         new_frame.push_var(caller_frame.pop())
     }
