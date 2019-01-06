@@ -142,7 +142,7 @@ pub fn ret(stack: &mut StackVM, frame: &mut Frame) -> Result<bool, &'static str>
         let ret_type = frame.get_ret_type();
         if ret_type != RetType::Void {
             let ret = frame.pop();
-            let mut caller_frame = stack.get_frame_mut();
+            let caller_frame = stack.get_frame_mut();
             caller_frame.push(ret)
         }
         stack.ret_pc();
@@ -285,11 +285,10 @@ pub fn methodcall(stack: &mut StackVM, punk_file: &PunkFile, new_pc: usize, clas
     let v: Vec<&str> = signature.split(|c| c == '(' || c == ')').collect();
     let n_args: usize = v[1].len();
     let mut new_frame: Frame = Frame::new();
-    let mut caller_frame = stack.get_frame_mut();
-    let obj_ref = match caller_frame.pop() {
-        Type::Object(obj) => Type::Object(obj),
-        _ => return Err("Expected a object reference. Stack malformed")
-    };
+    new_frame.set_ret_type(RetType::get_type(v[2]));
+    let caller_frame = stack.get_frame_mut();
+    let obj_ref = caller_frame.pop();
+    if !obj_ref.is_object() {return Err("Expected a object reference. Stack malformed")}
     new_frame.push_var(obj_ref);
     for _ in 0..n_args {
         new_frame.push_var(caller_frame.pop())

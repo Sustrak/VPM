@@ -14,10 +14,6 @@ use crate::isa::bytecode;
 use std::collections::HashMap;
 use std::env::args;
 
-fn usage() -> ! {
-    panic!("Usage: vpk <some_file.json>")
-}
-
 fn main() {
     // Data structures
     let mut objects: Objects = Default::default();
@@ -138,25 +134,39 @@ fn main() {
                 }
 
                 // Create object
-                bytecode::new(&mut objects, &mut frame, class, fields);
+                match bytecode::new(&mut objects, &mut frame, class, fields){
+                    Ok(()) => {},
+                    Err(msg) => report_error(pc, msg)
+                }
             },
             ByteCode::GOTO(label) => {
                 let label_pc = instructions.get_label_pc(label);
-                bytecode::goto(&mut stack, label_pc);
-                //stack.new_pc(label_pc)
+                match bytecode::goto(&mut stack, label_pc) {
+                    Ok(()) => {},
+                    Err(msg) => report_error(pc, msg)
+                }
             },
             ByteCode::LOAD(var) => {
-                bytecode::load(&mut frame, var.clone());
+                match bytecode::load(&mut frame, var.clone()) {
+                    Ok(()) => {},
+                    Err(msg) => report_error(pc, msg)
+                }
             },
             ByteCode::STORE(var) => {
-                bytecode::store(&mut frame, var.clone());
+                match bytecode::store(&mut frame, var.clone()) {
+                    Ok(()) => {},
+                    Err(msg) => report_error(pc, msg)
+                }
             },
             ByteCode::CONST(cst) => {
                 let t = match cst.parse::<i32>() {
                     Ok(i) => Type::Integer(i),
                     Err(_) => Type::String(cst.clone())
                 };
-                bytecode::cnst(&mut frame, t);
+                match bytecode::cnst(&mut frame, t) {
+                    Ok(()) => {},
+                    Err(msg) => report_error(pc, msg)
+                }
             },
             ByteCode::IF_EQ(label) => {
                 let label_pc = instructions.get_label_pc(label);
@@ -201,10 +211,16 @@ fn main() {
                 }
             },
             ByteCode::GETFIELD {field} => {
-                bytecode::getfield(&mut frame, &objects, field);
+                match bytecode::getfield(&mut frame, &objects, field) {
+                    Ok(()) => {},
+                    Err(msg) => report_error(pc, msg)
+                }
             },
             ByteCode::PUTFIELD {field} => {
-                bytecode::putfield(&mut frame, &mut objects, field);
+                match bytecode::putfield(&mut frame, &mut objects, field) {
+                    Ok(()) => {},
+                    Err(msg) => report_error(pc, msg)
+                }
             },
             ByteCode::METHODCALL {method} => {
                 stack.push_frame(frame.clone());
@@ -212,7 +228,10 @@ fn main() {
                 let v: Vec<&str> = method.split('/').collect();
                 let class = v[0];
                 let method_name = v[1];
-                bytecode::methodcall(&mut stack, &pk, method_pc, class, method_name);
+                match bytecode::methodcall(&mut stack, &pk, method_pc, class, method_name) {
+                    Ok(()) => {},
+                    Err(msg) => report_error(pc, msg)
+                }
             },
             _ => ()
         };

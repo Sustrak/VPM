@@ -2,7 +2,7 @@ use std::fs::File;
 
 #[derive(Deserialize)]
 pub struct PunkFileJSON {
-    magic_number: String,
+    pub magic_number: String,
     pub classes: Vec<ClassDeserialize>,
     pub main_code: Vec<String>
 }

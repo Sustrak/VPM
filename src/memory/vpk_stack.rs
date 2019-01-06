@@ -27,6 +27,15 @@ pub struct StackVM {
     pc: usize,
 }
 
+impl Type {
+    pub fn is_object(&self) -> bool {
+        match self {
+            &Type::Object(_) => true,
+            _ => false,
+        }
+    }
+}
+
 impl RetType {
     pub fn get_type(s: &str) -> RetType {
         match s {
