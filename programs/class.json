@@ -22,7 +22,7 @@
     "NEW A OBJ-A",
     "CONST CREATED",
     "PRINT",
-    "METHODCALL A hello_world",
+    "METHODCALL A/hello_world",
     "RETURN"
   ]
 }

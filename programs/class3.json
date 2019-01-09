@@ -24,7 +24,7 @@
     "CONST CREATED",
     "PRINT",
     "CONST 1",
-    "METHODCALL A hello_world",
+    "METHODCALL A/hello_world",
     "PRINT",
     "RETURN"
   ]

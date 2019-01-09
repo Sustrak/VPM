@@ -31,7 +31,7 @@ fn main() {
 
         for m in cls.methods.iter() {
             let mthd_name = &m.name;
-            let name = format!("{}{}", cls_name, mthd_name);
+            let name = format!("{}/{}", cls_name, mthd_name);
             let mut code = m.code.to_owned();
             instructions.new_method(name, &mut code)
         }
@@ -111,7 +111,7 @@ fn main() {
                     Err(msg) => report_error(pc, msg)
                 }
             },
-            ByteCode::NEW {class, name} => {
+            ByteCode::NEW {class} => {
                 // Search the class in the constant pool
                 let cls = match pk.find_class(class) {
                     Some(c) => c,
@@ -134,25 +134,39 @@ fn main() {
                 }
 
                 // Create object
-                bytecode::new(&mut objects, name.clone(), fields);
+                match bytecode::new(&mut objects, &mut frame, class, fields){
+                    Ok(()) => {},
+                    Err(msg) => report_error(pc, msg)
+                }
             },
             ByteCode::GOTO(label) => {
                 let label_pc = instructions.get_label_pc(label);
-                bytecode::goto(&mut stack, label_pc);
-                //stack.new_pc(label_pc)
+                match bytecode::goto(&mut stack, label_pc) {
+                    Ok(()) => {},
+                    Err(msg) => report_error(pc, msg)
+                }
             },
             ByteCode::LOAD(var) => {
-                bytecode::load(&mut frame, var.clone());
+                match bytecode::load(&mut frame, var.clone()) {
+                    Ok(()) => {},
+                    Err(msg) => report_error(pc, msg)
+                }
             },
             ByteCode::STORE(var) => {
-                bytecode::store(&mut frame, var.clone());
+                match bytecode::store(&mut frame, var.clone()) {
+                    Ok(()) => {},
+                    Err(msg) => report_error(pc, msg)
+                }
             },
             ByteCode::CONST(cst) => {
                 let t = match cst.parse::<i32>() {
                     Ok(i) => Type::Integer(i),
                     Err(_) => Type::String(cst.clone())
                 };
-                bytecode::cnst(&mut frame, t);
+                match bytecode::cnst(&mut frame, t) {
+                    Ok(()) => {},
+                    Err(msg) => report_error(pc, msg)
+                }
             },
             ByteCode::IF_EQ(label) => {
                 let label_pc = instructions.get_label_pc(label);
@@ -196,39 +210,41 @@ fn main() {
                     Err(msg) => report_error(pc, msg)
                 }
             },
-            ByteCode::GETFIELD {object, local} => {
-                bytecode::getfield(&mut frame, &objects, object, local);
+            ByteCode::GETFIELD {field} => {
+                match bytecode::getfield(&mut frame, &objects, field) {
+                    Ok(()) => {},
+                    Err(msg) => report_error(pc, msg)
+                }
             },
-            ByteCode::PUTFIELD {object, local} => {
-                bytecode::putfield(&mut frame, &mut objects, object, local);
+            ByteCode::PUTFIELD {field} => {
+                match bytecode::putfield(&mut frame, &mut objects, field) {
+                    Ok(()) => {},
+                    Err(msg) => report_error(pc, msg)
+                }
             },
-            ByteCode::METHODCALL {class, method} => {
+            ByteCode::METHODCALL {method} => {
                 stack.push_frame(frame.clone());
-                let method_name = format!("{}{}", class, method);
-                let method_pc = instructions.get_method_pc(method_name.as_str());
-                let signature = match pk.find_class(class) {
-                  Some(c) => {
-                      match c.find_method(method) {
-                          Some(m) => m.desc.clone(),
-                          None => report_error(pc, format!("The method {} in class {} couldn't be found", method, class).as_str())
-                      }
-                  },
-                  None => report_error(pc, format!("The class {} couldn't be found", class).as_str())
-                };
-                bytecode::methodcall(&mut stack, &signature, method_pc, frame.clone());
+                let method_pc = instructions.get_method_pc(method.as_str());
+                let v: Vec<&str> = method.split('/').collect();
+                let class = v[0];
+                let method_name = v[1];
+                match bytecode::methodcall(&mut stack, &pk, method_pc, class, method_name) {
+                    Ok(()) => {},
+                    Err(msg) => report_error(pc, msg)
+                }
             },
             _ => ()
         };
 
         match ins {
-            ByteCode::GOTO(_) | ByteCode::IF_EQ(_) | ByteCode::IF_CMPEQ(_) | ByteCode::IF_CMPLT(_) | ByteCode::METHODCALL {class: _, method: _} | ByteCode::RETURN => (),
+            ByteCode::GOTO(_) | ByteCode::IF_EQ(_) | ByteCode::IF_CMPEQ(_) | ByteCode::IF_CMPLT(_) | ByteCode::METHODCALL {method: _} | ByteCode::RETURN => (),
             _ => {
                 stack.inc_pc();
             }
         };
 
         match ins {
-            ByteCode::METHODCALL {class: _, method: _} | ByteCode::RETURN => {
+            ByteCode::METHODCALL {method: _} | ByteCode::RETURN => {
                 frame = stack.pop_frame()
             },
             _ => ()

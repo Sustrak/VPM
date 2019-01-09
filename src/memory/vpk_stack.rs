@@ -2,7 +2,7 @@
 pub enum Type {
     Integer(i32),
     String(String),
-    Object(usize),
+    Object(String),
 }
 
 #[derive(Eq, PartialEq, Clone, Debug)]
@@ -27,6 +27,15 @@ pub struct StackVM {
     pc: usize,
 }
 
+impl Type {
+    pub fn is_object(&self) -> bool {
+        match self {
+            &Type::Object(_) => true,
+            _ => false,
+        }
+    }
+}
+
 impl RetType {
     pub fn get_type(s: &str) -> RetType {
         match s {
@@ -44,11 +53,12 @@ impl Frame {
         Frame {
             local_vars: Vec::new(),
             stack: Vec::new(),
+            /** Used to set the behaviour of the return function */
             ret_type: RetType::Void
         }
     }
     /**
-    Will get the top value of the stack and store it in the local variable
+    Will get the top value of the operator stack and store it in the local variable
     */
     pub fn store_var(&mut self, i: usize) {
         let index = i;
@@ -65,7 +75,7 @@ impl Frame {
     }
 
     /**
-    Will get the local variable in index i and push it at the top of the stack
+    Will get the local variable in index i and push it at the top of the operator stack
     */
     pub fn load_var(&mut self, i: usize) {
         let index = i;
@@ -76,15 +86,16 @@ impl Frame {
 
         self.stack.push(var)
     }
-
+    /**
+    Will push variables into the variables Vec, used for the methodcalls
+    */
     pub fn push_var(&mut self, var: Type) {
         self.local_vars.push(var)
     }
 
-    pub fn pop_option(&mut self) -> Option<Type> {
-        self.stack.pop()
-    }
-
+    /**
+    Will pop a value from the operator stack and return it
+    */
     pub fn pop(&mut self) -> Type {
         match self.stack.pop() {
             Some(x) => x,
@@ -92,16 +103,25 @@ impl Frame {
         }
     }
 
+    /**
+    Will push the value t into the operator stack
+    */
     pub fn push(&mut self, t: Type) {
         self.stack.push(t)
     }
 
+    /**
+    Will set the return type of the frame
+    */
     pub fn set_ret_type(&mut self, t: RetType) {
         self.ret_type = t;
     }
 
-    pub fn get_ret_type(&self) -> &RetType {
-        &self.ret_type
+    /**
+    Will return the return type of the frame
+    */
+    pub fn get_ret_type(&self) -> RetType {
+        self.ret_type.clone()
     }
 }
 
@@ -122,13 +142,6 @@ impl StackVM {
         match self.stack.pop() {
             Some(f) => f,
             None => panic!("There are no more frames to pop")
-        }
-    }
-
-    pub fn get_frame(&self) -> &Frame {
-        match self.stack.last() {
-            Some(x) => x,
-            None => panic!("There are no frames to get")
         }
     }
 

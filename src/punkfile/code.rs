@@ -51,18 +51,14 @@ impl Code {
             "IF_CMPEQ" => ByteCode::IF_CMPEQ(next(&mut split_inst)),
             "NEW" => ByteCode::NEW {
                 class: next(&mut split_inst),
-                name: next(&mut split_inst)
             },
             "GETFIELD" => ByteCode::GETFIELD {
-                object: next(&mut split_inst),
-                local: next(&mut split_inst)
+                field: next(&mut split_inst)
             },
             "PUTFIELD" => ByteCode::PUTFIELD {
-                object: next(&mut split_inst),
-                local: next(&mut split_inst)
+                field: next(&mut split_inst)
             },
             "METHODCALL" => ByteCode::METHODCALL {
-                class: next(&mut split_inst),
                 method: next(&mut split_inst)
             },
             x => panic!("The instruction {} not exist", x)
