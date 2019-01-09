@@ -16,7 +16,8 @@
           "name": "my_name",
           "descriptor": "()S",
           "code": [
-            "GETFIELD OBJ-A name",
+            "LOAD 0",
+            "GETFIELD name",
             "RETURN"
           ]
         }
@@ -27,7 +28,7 @@
     "NEW A OBJ-A",
     "CONST CREATED",
     "PRINT",
-    "METHODCALL A my_name",
+    "METHODCALL A/my_name",
     "PRINT",
     "RETURN"
   ]
