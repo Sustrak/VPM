@@ -159,11 +159,7 @@ fn main() {
                 }
             },
             ByteCode::CONST(cst) => {
-                let t = match cst.parse::<i32>() {
-                    Ok(i) => Type::Integer(i),
-                    Err(_) => Type::String(cst.clone())
-                };
-                match bytecode::cnst(&mut frame, t) {
+                match bytecode::cnst(&mut frame, cst) {
                     Ok(()) => {},
                     Err(msg) => report_error(pc, msg)
                 }

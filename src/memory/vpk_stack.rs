@@ -10,7 +10,7 @@ pub enum RetType {
     Integer,
     String,
     Object,
-    Void
+    Void,
 }
 
 #[derive(Clone, Debug)]

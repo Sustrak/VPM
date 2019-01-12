@@ -125,7 +125,7 @@ pub fn print(frame: &mut Frame) -> Result<(), &'static str> {
     match x {
         Type::Integer(x) => {println!("{}", x); Ok(())},
         Type::String(x) => {println!("{}", x); Ok(())},
-        Type::Object(_) => Err("Printing an object is not supported"),
+        _ => Err("Printing an object is not supported"),
     }
 }
 
@@ -156,8 +156,6 @@ pub fn new(objects: &mut Objects, frame: &mut Frame, object: &String, fields: Ha
     Ok(())
 }
 
-//pub fn label(stack: &mut Frame) -> Result<(), &'static str> {}
-
 pub fn goto(stack: &mut StackVM, new_pc: usize) -> Result<(), &'static str> {
     stack.new_pc(new_pc);
     Ok(())
@@ -173,8 +171,12 @@ pub fn store(stack: &mut Frame, local: usize) -> Result<(), &'static str> {
     Ok(())
 }
 
-pub fn cnst(stack: &mut Frame, con: Type) -> Result<(), &'static str> {
-    stack.push(con);
+pub fn cnst(stack: &mut Frame, con: &String) -> Result<(), &'static str> {
+    let t = match con.parse::<i32>() {
+        Ok(i) => Type::Integer(i),
+        Err(_) => Type::String(con.clone())
+    };
+    stack.push(t);
     Ok(())
 }
 
@@ -234,8 +236,7 @@ pub fn if_cmplt(frame: &mut Frame) -> Result<bool, &'static str> {
 /// *-------------*            *-------------*
 /// *    STACK    *            *    STACK    *
 /// *-------------*            *-------------*
-/// *    value    *    --->    *             *
-/// *    obj.ref  *            *             *
+/// *    obj.ref  *    --->    *    value    *
 /// *-------------*            *-------------*
 pub fn getfield(stack: &mut Frame, objects: &Objects, field: &String) -> Result<(), &'static str> {
     let object= match stack.pop() {
@@ -250,7 +251,8 @@ pub fn getfield(stack: &mut Frame, objects: &Objects, field: &String) -> Result<
 /// *-------------*            *-------------*
 /// *    STACK    *            *    STACK    *
 /// *-------------*            *-------------*
-/// *    obj.ref  *    --->    *    value    *
+/// *    value    *    --->    *             *
+/// *    obj.ref  *            *             *
 /// *-------------*            *-------------*
 pub fn putfield(stack: &mut Frame, objects: &mut Objects, field: &String) -> Result<(), &'static str> {
     let value = stack.pop();

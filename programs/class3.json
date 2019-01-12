@@ -20,7 +20,7 @@
     }
   ],
   "main_code": [
-    "NEW A OBJ-A",
+    "NEW A",
     "CONST CREATED",
     "PRINT",
     "CONST 1",

@@ -25,7 +25,7 @@
     }
   ],
   "main_code": [
-    "NEW A OBJ-A",
+    "NEW A",
     "CONST CREATED",
     "PRINT",
     "METHODCALL A/my_name",
