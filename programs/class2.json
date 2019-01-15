@@ -17,7 +17,7 @@
           "name": "hello_world",
           "descriptor": "()S",
           "code": [
-            "CONST THIS-IS-A-STRING-RETURNED-FORM-FUNCTION",
+            "CONST THIS IS A STRING IN A FUNCTION",
             "RETURN"
           ]
         }

@@ -44,7 +44,11 @@ impl Code {
             "RETURN" => ByteCode::RETURN,
             "GOTO" => ByteCode::GOTO(next(&mut split_inst)),
             "LOAD" => ByteCode::LOAD(next(&mut split_inst).parse::<usize>().unwrap()),
-            "CONST" => ByteCode::CONST(split_inst.fold(String::new(), |acc, st| format!("{} {}", acc, st))),
+            "CONST" => ByteCode::CONST({
+                let mut s = split_inst.fold(String::new(), |acc, st| format!("{} {}", acc, st));
+                s.remove(0);
+                s
+            }),
             "LABEL" => ByteCode::LABEL(next(&mut split_inst)),
             "STORE" => ByteCode::STORE(next(&mut split_inst).parse::<usize>().unwrap()),
             "IF_EQ" => ByteCode::IF_EQ(next(&mut split_inst)),
