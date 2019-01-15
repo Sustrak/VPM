@@ -266,8 +266,8 @@ pub fn getfield(stack: &mut Frame, objects: &Objects, field: &String) -> Result<
 /// *-------------*            *-------------*
 /// *    STACK    *            *    STACK    *
 /// *-------------*            *-------------*
-/// *    value    *    --->    *             *
 /// *    obj.ref  *            *             *
+/// *    value    *    --->    *             *
 /// *-------------*            *-------------*
 pub fn putfield(stack: &mut Frame, objects: &mut Objects, field: &String) -> Result<(), &'static str> {
     let value = stack.pop();
