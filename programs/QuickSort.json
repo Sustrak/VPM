@@ -97,8 +97,10 @@
           "descriptor": "()V",
           "code": [
             "CONST 0",
+            "LOAD 0",
             "PUTFIELD value",
             "NEW Empty",
+            "LOAD 0",
             "PUTFIELD next",
             "RETURN"
           ]
@@ -200,8 +202,10 @@
           "descriptor": "()V",
           "code": [
             "NULL",
+            "LOAD 0",
             "PUTFIELD number",
             "CONST 0",
+            "LOAD 0",
             "PUTFIELD size",
             "RETURN"
           ]
