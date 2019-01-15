@@ -115,7 +115,7 @@ pub fn sadd(frame: &mut Frame) -> Result<(), &'static str> {
             frame.push(t);
             Ok(())
         },
-        _ => Err("Can not construct an string with an object")
+        _ => Err("Can not construct an string with an object or boolean")
     }
 }
 
@@ -125,6 +125,7 @@ pub fn print(frame: &mut Frame) -> Result<(), &'static str> {
     match x {
         Type::Integer(x) => {println!("{}", x); Ok(())},
         Type::String(x) => {println!("{}", x); Ok(())},
+        Type::Boolean(b) => {println!("{}", b); Ok(())}
         _ => Err("Printing an object is not supported"),
     }
 }
@@ -172,9 +173,12 @@ pub fn store(stack: &mut Frame, local: usize) -> Result<(), &'static str> {
 }
 
 pub fn cnst(stack: &mut Frame, con: &String) -> Result<(), &'static str> {
-    let t = match con.parse::<i32>() {
-        Ok(i) => Type::Integer(i),
-        Err(_) => Type::String(con.clone())
+    let t = match con.parse::<bool>() {
+        Ok(b) => Type::Boolean(b),
+        Err(_) => match con.parse::<i32>() {
+            Ok(i) => Type::Integer(i),
+            Err(_) => Type::String(con.clone()),
+        }
     };
     stack.push(t);
     Ok(())
@@ -208,8 +212,14 @@ pub fn if_cmpeq(frame: &mut Frame) -> Result<bool, &'static str> {
                 return Ok(true)
             }
             Ok(false)
-        }
-        _ => Err("Can't compare when the value is not a integer")
+        },
+        (Type::Boolean(x1), Type::Boolean(x2)) => {
+            if x1 == x2 {
+                return Ok(true)
+            }
+            Ok(false)
+        },
+        _ => Err("Can't compare when the value is not a integer or boolean")
     }
 }
 

@@ -3,6 +3,7 @@ pub enum Type {
     Integer(i32),
     String(String),
     Object(String),
+    Boolean(bool)
 }
 
 #[derive(Eq, PartialEq, Clone, Debug)]
@@ -10,7 +11,8 @@ pub enum RetType {
     Integer,
     String,
     Object,
-    Void,
+    Boolean,
+    Void
 }
 
 #[derive(Clone, Debug)]
@@ -43,6 +45,7 @@ impl RetType {
             "S" => RetType::String,
             "O" => RetType::Object,
             "V" => RetType::Void,
+            "B" => RetType::Boolean,
             _ => panic!("The type {} is not a valid return type", s)
         }
     }

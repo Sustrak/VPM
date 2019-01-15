@@ -2,8 +2,8 @@
   "magic_number": "CAFECAFE",
   "classes": [
     {
-      "this": "A",
-      "super": "A",
+      "_this": "A",
+      "_super": "A",
       "fields": [
         {
           "name": "name",

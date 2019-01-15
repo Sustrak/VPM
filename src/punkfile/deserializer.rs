@@ -9,8 +9,9 @@ pub struct PunkFileJSON {
 
 #[derive(Deserialize)]
 pub struct ClassDeserialize {
+    #[serde(rename = "_this")]
     pub this: String,
-    #[serde(rename = "super")]
+    #[serde(rename = "_super")]
     pub super_cls: String,
     pub fields: Vec<FieldDeserialize>,
     pub methods: Vec<CodeDeserialize>
