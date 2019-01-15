@@ -96,11 +96,11 @@
           "name": "constructor",
           "descriptor": "()V",
           "code": [
+            "LOAD 0",
             "CONST 0",
-            "LOAD 0",
             "PUTFIELD value",
-            "NEW Empty",
             "LOAD 0",
+            "NEW Empty",
             "PUTFIELD next",
             "RETURN"
           ]
@@ -201,11 +201,11 @@
           "name": "constructor",
           "descriptor": "()V",
           "code": [
+            "LOAD 0",
             "NULL",
-            "LOAD 0",
             "PUTFIELD number",
-            "CONST 0",
             "LOAD 0",
+            "CONST 0",
             "PUTFIELD size",
             "RETURN"
           ]
