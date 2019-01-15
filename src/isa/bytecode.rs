@@ -12,7 +12,7 @@ pub enum ByteCode {
     POP,
     IADD,
     SADD,
-    //NULL
+    NULL,
     PRINT,
     RETURN,
     LABEL(String),
@@ -73,6 +73,11 @@ pub fn sub(frame: &mut Frame) -> Result<(), &'static str> {
 
 pub fn pop(frame: &mut Frame) -> Result<(), &'static str> {
     frame.pop();
+    Ok(())
+}
+
+pub fn null(frame: &mut Frame) -> Result<(), &'static str> {
+    frame.push(Type::Object("Null".to_string()));
     Ok(())
 }
 

@@ -1,12 +1,19 @@
 use std::collections::HashMap;
 use crate::memory::vpk_stack::Type;
 
-#[derive(Default)]
 pub struct Objects {
     objects: HashMap<String, HashMap<String, Type>>
 }
 
 impl Objects {
+    pub fn new() -> Objects {
+        let mut h = HashMap::new();
+        h.insert("Null".to_string(), HashMap::new());
+        Objects {
+            objects: h
+        }
+    }
+
     pub fn get_field(&self, object: String, field: &String) -> Type {
         match self.objects.get(object.as_str()) {
             Some(cls) => match cls.get(field.as_str()) {

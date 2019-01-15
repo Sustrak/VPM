@@ -13,6 +13,13 @@
       ],
       "methods": [
         {
+          "name": "constructor",
+          "descriptor": "()V",
+          "code": [
+            "RETURN"
+          ]
+        },
+        {
           "name": "my_name",
           "descriptor": "()S",
           "code": [

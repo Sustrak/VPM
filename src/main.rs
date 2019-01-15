@@ -16,7 +16,7 @@ use std::env::args;
 
 fn main() {
     // Data structures
-    let mut objects: Objects = Default::default();
+    let mut objects: Objects = Objects::new();
     let mut stack: StackVM = StackVM::new();
     let mut instructions: Instructions = Default::default();
     let file_path = match args().nth(1) {
@@ -94,6 +94,12 @@ fn main() {
                     Err(msg) => report_error(pc, msg)
                 }
             },
+            ByteCode::NULL => {
+                match bytecode::null(&mut frame) {
+                    Ok(()) => {},
+                    Err(msg) => report_error(pc, msg)
+                }
+            }
             ByteCode::PRINT => {
                 match bytecode::print(&mut frame) {
                     Ok(()) => {},
@@ -120,7 +126,7 @@ fn main() {
 
                 let mut fields: HashMap<String, Type> = HashMap::new();
                 // Check if has parent
-                if cls.this != cls.super_cls {
+                if cls.super_cls != "" {
                     let parent = match pk.find_class(&cls.super_cls) {
                         Some(c) => c,
                         None => report_error(pc, format!("The parent class {} of class {} couldn't be find", cls.super_cls ,class).as_str())
@@ -137,6 +143,17 @@ fn main() {
                 match bytecode::new(&mut objects, &mut frame, class, fields){
                     Ok(()) => {},
                     Err(msg) => report_error(pc, msg)
+                }
+
+                // Call constructor
+                let reference = frame.pop();
+                frame.push(reference.clone());
+                frame.push(reference);
+                stack.push_frame(frame.clone());
+                let constructor_pc = instructions.get_method_pc(format!("{}/{}", class, "constructor").as_str());
+                match bytecode::methodcall(&mut stack, &pk, constructor_pc, class, "constructor") {
+                    Ok(()) => {},
+                    Err(msg) => report_error(pc, msg),
                 }
             },
             ByteCode::GOTO(label) => {
@@ -233,14 +250,14 @@ fn main() {
         };
 
         match ins {
-            ByteCode::GOTO(_) | ByteCode::IF_EQ(_) | ByteCode::IF_CMPEQ(_) | ByteCode::IF_CMPLT(_) | ByteCode::METHODCALL {method: _} | ByteCode::RETURN => (),
+            ByteCode::GOTO(_) | ByteCode::IF_EQ(_) | ByteCode::IF_CMPEQ(_) | ByteCode::IF_CMPLT(_) | ByteCode::METHODCALL {method: _} | ByteCode::RETURN | ByteCode::NEW {class: _} => (),
             _ => {
                 stack.inc_pc();
             }
         };
 
         match ins {
-            ByteCode::METHODCALL {method: _} | ByteCode::RETURN => {
+            ByteCode::METHODCALL {method: _} | ByteCode::RETURN | ByteCode::NEW {class: _} => {
                 frame = stack.pop_frame()
             },
             _ => ()

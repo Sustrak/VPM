@@ -24,6 +24,7 @@ impl Instructions {
         }
     }
 
+    /// name should be CLASS/METHOD
     pub fn get_method_pc(&self, name: &str) -> usize {
         match self.methods.get(name) {
             Some(m) => m.clone(),

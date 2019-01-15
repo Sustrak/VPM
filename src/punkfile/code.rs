@@ -39,6 +39,7 @@ impl Code {
             "SUB" => ByteCode::SUB,
             "IADD" => ByteCode::IADD,
             "SADD" => ByteCode::SADD,
+            "NULL" => ByteCode::NULL,
             "PRINT" => ByteCode::PRINT,
             "RETURN" => ByteCode::RETURN,
             "GOTO" => ByteCode::GOTO(next(&mut split_inst)),
