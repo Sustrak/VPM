@@ -304,12 +304,16 @@ pub fn methodcall(stack: &mut StackVM, punk_file: &PunkFile, new_pc: usize, clas
     let mut new_frame: Frame = Frame::new();
     new_frame.set_ret_type(RetType::get_type(v[2]));
     let caller_frame = stack.get_frame_mut();
+    let mut vars = Vec::new();
     for _ in 0..n_args {
-        new_frame.push_var(caller_frame.pop())
+        vars.push(caller_frame.pop())
     }
     let obj_ref = caller_frame.pop();
     if !obj_ref.is_object() {return Err("Expected a object reference. Stack malformed")}
     new_frame.push_var(obj_ref);
+    for _ in 0..n_args {
+        new_frame.push_var(vars.pop().unwrap())
+    }
     stack.push_frame(new_frame);
     stack.methodcall_pc(new_pc);
     Ok(())
