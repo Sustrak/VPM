@@ -58,8 +58,8 @@ pub fn div(frame: &mut Frame) -> Result<(), &'static str> {
 }
 
 pub fn sub(frame: &mut Frame) -> Result<(), &'static str> {
-    let x = frame.pop();
     let y = frame.pop();
+    let x = frame.pop();
 
     match (x, y) {
         (Type::Integer(xx), Type::Integer(yy)) => {

@@ -1,0 +1,107 @@
+{
+  "magic_number": "CAFECAFE",
+  "classes": [
+    {
+      "_this": "DrunkPirate",
+      "_super": "",
+      "fields": [],
+      "methods": [
+        {
+          "name": "constructor",
+          "descriptor": "()V",
+          "code": [
+            "RETURN"
+          ]
+        },
+        {
+          "name": "sing",
+          "descriptor": "()B",
+          "code": [
+            "LOAD 0",
+            "CONST 99",
+            "METHODCALL DrunkPirate/verse",
+            "POP",
+            "CONST 1",
+            "RETURN"
+          ]
+        },
+        {
+          "name": "verse",
+          "descriptor": "(I)I",
+          "code": [
+            "LOAD 0",
+            "LOAD 1",
+            "METHODCALL DrunkPirate/bottles",
+            "CONST  of beer on the wall, take one down, pass it around, ",
+            "SADD",
+            "LOAD 0",
+            "LOAD 1",
+            "CONST 1",
+            "SUB",
+            "METHODCALL DrunkPirate/bottles",
+            "SADD",
+            "CONST  of beer on the wall.",
+            "SADD",
+            "PRINT ",
+            "CONST 1",
+            "LOAD 1",
+            "IF_CMPLT nTrue1",
+            "GOTO nFalse2",
+            "LABEL nTrue1",
+            "LOAD 0",
+            "LOAD 1",
+            "CONST 1",
+            "SUB",
+            "METHODCALL DrunkPirate/verse",
+            "GOTO nAfter3",
+            "LABEL nFalse2",
+            "CONST 0",
+            "LABEL nAfter3",
+            "RETURN"
+          ]
+        },
+        {
+          "name": "bottles",
+          "descriptor": "(I)S",
+          "code": [
+            "LOAD 1",
+            "CONST 0",
+            "IF_CMPEQ nTrue4",
+            "GOTO nFalse5",
+            "LABEL nTrue4",
+            "CONST no more bottles",
+            "GOTO nAfter6",
+            "LABEL nFalse5",
+            "LOAD 1",
+            "CONST 1",
+            "IF_CMPEQ nTrue7",
+            "GOTO nFalse8",
+            "LABEL nTrue7",
+            "CONST 1 bottle",
+            "GOTO nAfter9",
+            "LABEL nFalse8",
+            "LOAD 1",
+            "CONST  bottles",
+            "SADD",
+            "LABEL nAfter9",
+            "LABEL nAfter6",
+            "RETURN"
+          ]
+        }
+      ]
+    }
+  ],
+  "main_code": [
+    "NEW DrunkPirate",
+    "METHODCALL DrunkPirate/sing",
+    "IF_EQ nFalse11",
+    "GOTO nTrue10",
+    "LABEL nTrue10",
+    "CONST Done!",
+    "PRINT ",
+    "GOTO nAfter12",
+    "LABEL nFalse11",
+    "LABEL nAfter12",
+    "RETURN"
+  ]
+}
