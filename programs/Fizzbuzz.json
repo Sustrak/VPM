@@ -1,0 +1,135 @@
+{
+  "magic_number": "CAFECAFE",
+  "classes": [
+    {
+      "_this": "FizzBuzzCounter",
+      "_super": "",
+      "fields": [],
+      "methods": [
+        {
+          "name": "constructor",
+          "descriptor": "()V",
+          "code": [
+            "RETURN"
+          ]
+        },
+        {
+          "name": "doYourThing",
+          "descriptor": "(II)I",
+          "code": [
+            "CONST 0",
+            "STORE 3",
+            "LOAD 1",
+            "STORE 3",
+            "CONST Running FizzBuzz from 0 to 100",
+            "PRINT",
+            "LABEL test5",
+            "LOAD 3",
+            "LOAD 2",
+            "IF_CMPLT body6",
+            "GOTO exit7",
+            "LABEL body6",
+            "LOAD 0",
+            "CONST 15",
+            "LOAD 3",
+            "METHODCALL FizzBuzzCounter/divides",
+            "CONST 1",
+            "IF_CMPEQ nTrue8",
+            "GOTO nFalse9",
+            "LABEL nTrue8",
+            "CONST FizzBuzz",
+            "PRINT",
+            "GOTO nAfter10",
+            "LABEL nFalse9",
+            "LOAD 0",
+            "CONST 5",
+            "LOAD 3",
+            "METHODCALL FizzBuzzCounter/divides",
+            "IF_EQ nFalse12",
+            "GOTO nTrue11",
+            "LABEL nTrue11",
+            "CONST Fizz",
+            "PRINT",
+            "GOTO nAfter13",
+            "LABEL nFalse12",
+            "LOAD 0",
+            "CONST 3",
+            "LOAD 3",
+            "METHODCALL FizzBuzzCounter/divides",
+            "IF_EQ nFalse15",
+            "GOTO nTrue14",
+            "LABEL nTrue14",
+            "CONST Buzz",
+            "PRINT",
+            "GOTO nAfter16",
+            "LABEL nFalse15",
+            "LOAD 3",
+            "PRINT",
+            "LABEL nAfter16",
+            "LABEL nAfter13",
+            "LABEL nAfter10",
+            "LOAD 3",
+            "CONST 1",
+            "IADD",
+            "STORE 3",
+            "GOTO test5",
+            "LABEL exit7",
+            "LOAD 3",
+            "RETURN"
+          ]
+        },
+        {
+          "name": "divides",
+          "descriptor": "(II)B",
+          "code": [
+            "CONST 0",
+            "STORE 3",
+            "CONST 0",
+            "STORE 4",
+            "LOAD 0",
+            "LOAD 2",
+            "LOAD 1",
+            "METHODCALL FizzBuzzCounter/mod",
+            "STORE 3",
+            "LOAD 3",
+            "CONST 0",
+            "IF_CMPEQ nTrue6",
+            "GOTO nFalse7",
+            "LABEL nTrue6",
+            "CONST 1",
+            "STORE 4",
+            "GOTO nAfter8",
+            "LABEL nFalse7",
+            "CONST 0",
+            "STORE 4",
+            "LABEL nAfter8",
+            "LOAD 4",
+            "RETURN"
+          ]
+        },
+        {
+          "name": "mod",
+          "descriptor": "(II)I",
+          "code": [
+            "LOAD 1",
+            "LOAD 2",
+            "LOAD 1",
+            "LOAD 2",
+            "DIV",
+            "MUL",
+            "SUB",
+            "RETURN"
+          ]
+        }
+      ]
+    }
+  ],
+  "main_code": [
+    "NEW FizzBuzzCounter",
+    "CONST 0",
+    "CONST 100",
+    "METHODCALL FizzBuzzCounter/doYourThing",
+    "PRINT",
+    "RETURN"
+  ]
+}
