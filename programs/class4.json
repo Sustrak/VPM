@@ -3,7 +3,7 @@
   "classes": [
     {
       "_this": "A",
-      "_super": "A",
+      "_super": "",
       "fields": [
         {
           "name": "name",
