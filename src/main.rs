@@ -55,7 +55,7 @@ fn main() {
     loop {
         pc = stack.get_pc();
         ins = instructions.get_ins(pc);
-        //println!("DEBUG: pc {} ins {:?}", pc, ins);
+        println!("DEBUG: pc {} ins {:?}", pc, ins);
 
         match ins {
             ByteCode::MUL => {
@@ -263,7 +263,7 @@ fn main() {
             _ => ()
         };
 
-        //println!("DEBUG: FRAME - {:#?}", frame)
+        //println!("DEBUG: {:#?}", frame)
 
     }
 

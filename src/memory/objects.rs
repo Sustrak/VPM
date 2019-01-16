@@ -18,7 +18,7 @@ impl Objects {
         match self.objects.get(object.as_str()) {
             Some(cls) => match cls.get(field.as_str()) {
                 Some(v) => return v.clone(),
-                None => panic!("The field in {} doesn't exist", field)
+                None => panic!("The field {} in {} doesn't exist", field, object)
             },
             None => panic!("The object doesn't exist")
         }
