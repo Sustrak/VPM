@@ -25,10 +25,10 @@ impl Instructions {
     }
 
     /// name should be CLASS/METHOD
-    pub fn get_method_pc(&self, name: &str) -> usize {
+    pub fn get_method_pc(&self, name: &str) -> Option<usize> {
         match self.methods.get(name) {
-            Some(m) => m.clone(),
-            None => panic!("The method {} doesn't exist", name)
+            Some(m) => Some(m.clone()),
+            None => None
         }
     }
 

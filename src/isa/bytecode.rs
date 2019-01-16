@@ -2,6 +2,7 @@ use crate::memory::vpk_stack::{StackVM, Frame, Type, RetType};
 use crate::memory::objects::Objects;
 use std::collections::HashMap;
 use crate::punkfile::punk_file::PunkFile;
+use crate::memory::instructions::Instructions;
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone)]
@@ -289,7 +290,7 @@ pub fn putfield(stack: &mut Frame, objects: &mut Objects, field: &String) -> Res
 /// *    ....     *    --->    *    ....     * ...
 /// *    argN     *            *    argN     * N
 /// *-------------*            *-------------*
-pub fn methodcall(stack: &mut StackVM, punk_file: &PunkFile, new_pc: usize, class: &str, method: &str) -> Result<(), &'static str> {
+pub fn methodcall(stack: &mut StackVM, punk_file: &PunkFile, ins: &Instructions, class: &str, method: &str) -> Result<(), &'static str> {
     let signature = match punk_file.find_class(class) {
         Some(c) => {
             match c.find_method(method) {
@@ -310,6 +311,29 @@ pub fn methodcall(stack: &mut StackVM, punk_file: &PunkFile, new_pc: usize, clas
     }
     let obj_ref = caller_frame.pop();
     if !obj_ref.is_object() {return Err("Expected a object reference. Stack malformed")}
+
+    let mut cls_name: String;
+    match obj_ref.clone() {
+        Type::Object(name) => {
+            cls_name = name;
+            cls_name.retain(|c| !c.is_numeric())
+        }
+        _ => return Err("Expected a object reference. Stack malformed")
+    };
+    let mut new_pc = usize::max_value();
+    while new_pc == usize::max_value() {
+        //println!("DEBUG: new_pc {} | cls_name: {} | method: {}", new_pc, cls_name, method);
+        match ins.get_method_pc(format!("{}/{}", cls_name, method).as_str()) {
+            None => {
+                match punk_file.find_class(cls_name.as_str()) {
+                    None => return Err("No parent class found trying to get the pc method"),
+                    Some(cls) => cls_name = cls.super_cls.clone(),
+                }
+            },
+            Some(pc) => new_pc = pc,
+        }
+    }
+
     new_frame.push_var(obj_ref);
     for _ in 0..n_args {
         new_frame.push_var(vars.pop().unwrap())

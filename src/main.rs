@@ -43,10 +43,10 @@ fn main() {
     stack.push_frame(Frame::new());
 
     // Set the pc to the first instruction of the main code
-    stack.new_pc(instructions.get_method_pc("AppMain"));
+    stack.new_pc(instructions.get_method_pc("AppMain").unwrap());
 
-    println!("DEBUG: {:?}", instructions.methods);
-    println!("DEBUG: {:?}", instructions.code);
+    //println!("DEBUG: {:#?}", instructions.methods);
+    //println!("DEBUG: {:?}", instructions.code);
 
     // Execute code
     let mut pc: usize;
@@ -55,7 +55,7 @@ fn main() {
     loop {
         pc = stack.get_pc();
         ins = instructions.get_ins(pc);
-        println!("DEBUG: pc {} ins {:?}", pc, ins);
+        //println!("DEBUG: pc {} ins {:?}", pc, ins);
 
         match ins {
             ByteCode::MUL => {
@@ -151,7 +151,7 @@ fn main() {
                 frame.push(reference);
                 stack.push_frame(frame.clone());
                 let constructor_pc = instructions.get_method_pc(format!("{}/{}", class, "constructor").as_str());
-                match bytecode::methodcall(&mut stack, &pk, constructor_pc, class, "constructor") {
+                match bytecode::methodcall(&mut stack, &pk, &instructions, class, "constructor") {
                     Ok(()) => {},
                     Err(msg) => report_error(pc, msg),
                 }
@@ -241,7 +241,7 @@ fn main() {
                 let v: Vec<&str> = method.split('/').collect();
                 let class = v[0];
                 let method_name = v[1];
-                match bytecode::methodcall(&mut stack, &pk, method_pc, class, method_name) {
+                match bytecode::methodcall(&mut stack, &pk, &instructions, class, method_name) {
                     Ok(()) => {},
                     Err(msg) => report_error(pc, msg)
                 }
