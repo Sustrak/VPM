@@ -260,6 +260,7 @@ pub fn getfield(stack: &mut Frame, objects: &Objects, field: &String) -> Result<
         _ => return Err("A object reference was expected")
     };
     let field = objects.get_field(object, field);
+    println!("DEBUG: GETFIELD {:?}", field);
     stack.push(field);
     Ok(())
 }
@@ -272,6 +273,7 @@ pub fn getfield(stack: &mut Frame, objects: &Objects, field: &String) -> Result<
 /// *-------------*            *-------------*
 pub fn putfield(stack: &mut Frame, objects: &mut Objects, field: &String) -> Result<(), &'static str> {
     let value = stack.pop();
+    println!("DEBUG: PUTFIELD {:?}", value);
     let object= match stack.pop() {
         Type::Object(obj) => obj,
         _ => return Err("A object reference was expected")

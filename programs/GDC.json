@@ -1,0 +1,206 @@
+{
+  "magic_number": "CAFECAFE",
+  "classes": [
+    {
+      "_this": "GreatestCommonDivisor",
+      "_super": "",
+      "fields": [
+        {
+          "name": "initA",
+          "descriptor": "I",
+          "value": ""
+        },
+        {
+          "name": "initB",
+          "descriptor": "I",
+          "value": ""
+        },
+        {
+          "name": "n",
+          "descriptor": "I",
+          "value": ""
+        },
+        {
+          "name": "t",
+          "descriptor": "I",
+          "value": ""
+        },
+        {
+          "name": "r",
+          "descriptor": "I",
+          "value": ""
+        }
+      ],
+      "methods": [
+        {
+          "name": "constructor",
+          "descriptor": "()V",
+          "code": [
+            "LOAD 0",
+            "CONST 0",
+            "PUTFIELD initA",
+            "LOAD 0",
+            "CONST 0",
+            "PUTFIELD initB",
+            "LOAD 0",
+            "CONST 0",
+            "PUTFIELD n",
+            "LOAD 0",
+            "CONST 0",
+            "PUTFIELD t",
+            "LOAD 0",
+            "CONST 0",
+            "PUTFIELD r",
+            "RETURN"
+          ]
+        },
+        {
+          "name": "init",
+          "descriptor": "(II)I",
+          "code": [
+            "LOAD 0",
+            "LOAD 1",
+            "PUTFIELD initA",
+            "LOAD 0",
+            "LOAD 2",
+            "PUTFIELD initB",
+            "LOAD 0",
+            "METHODCALL GreatestCommonDivisor/findGcd",
+            "RETURN"
+          ]
+        },
+        {
+          "name": "findGcd",
+          "descriptor": "()I",
+          "code": [
+            "LOAD 0",
+            "GETFIELD initB",
+            "LOAD 0",
+            "GETFIELD initA",
+            "IF_CMPLT nTrue2",
+            "GOTO nFalse3",
+            "LABEL nTrue2",
+            "LOAD 0",
+            "LOAD 0",
+            "LOAD 0",
+            "GETFIELD initA",
+            "LOAD 0",
+            "GETFIELD initB",
+            "METHODCALL GreatestCommonDivisor/gcd",
+            "PUTFIELD n",
+            "GOTO nAfter4",
+            "LABEL nFalse3",
+            "LOAD 0",
+            "LOAD 0",
+            "LOAD 0",
+            "GETFIELD initB",
+            "LOAD 0",
+            "GETFIELD initA",
+            "METHODCALL GreatestCommonDivisor/gcd",
+            "PUTFIELD n",
+            "LABEL nAfter4",
+            "LOAD 0",
+            "GETFIELD n",
+            "RETURN"
+          ]
+        },
+        {
+          "name": "gcd",
+          "descriptor": "(II)I",
+          "code": [
+            "CONST 0",
+            "STORE 3",
+            "CONST 0",
+            "STORE 4",
+            "LOAD 1",
+            "STORE 3",
+            "LOAD 2",
+            "STORE 4",
+            "LABEL test5",
+            "LOAD 4",
+            "CONST 0",
+            "IF_CMPEQ exit7",
+            "GOTO body6",
+            "LABEL body6",
+            "LOAD 0",
+            "LOAD 4",
+            "PUTFIELD t",
+            "LOAD 0",
+            "LOAD 3",
+            "LOAD 4",
+            "METHODCALL GreatestCommonDivisor/modulo",
+            "STORE 4",
+            "LOAD 0",
+            "GETFIELD t",
+            "STORE 3",
+            "GOTO test5",
+            "LABEL exit7",
+            "LOAD 3",
+            "RETURN"
+          ]
+        },
+        {
+          "name": "modulo",
+          "descriptor": "(II)I",
+          "code": [
+            "LOAD 0",
+            "LOAD 1",
+            "PUTFIELD r",
+            "LABEL test8",
+            "LOAD 2",
+            "LOAD 0",
+            "GETFIELD r",
+            "IF_CMPLT body9",
+            "GOTO nNext11",
+            "LABEL nNext11",
+            "LOAD 2",
+            "LOAD 0",
+            "GETFIELD r",
+            "IF_CMPEQ body9",
+            "GOTO exit10",
+            "LABEL body9",
+            "LOAD 0",
+            "LOAD 0",
+            "GETFIELD r",
+            "LOAD 2",
+            "SUB",
+            "PUTFIELD r",
+            "GOTO test8",
+            "LABEL exit10",
+            "LOAD 0",
+            "GETFIELD r",
+            "RETURN"
+          ]
+        }
+      ]
+    }
+  ],
+  "main_code": [
+    "NEW GreatestCommonDivisor",
+    "CONST 28",
+    "CONST 7856",
+    "METHODCALL GreatestCommonDivisor/init",
+    "PRINT",
+    "NEW GreatestCommonDivisor",
+    "CONST 344",
+    "CONST 873",
+    "METHODCALL GreatestCommonDivisor/init",
+    "PRINT",
+    "NEW GreatestCommonDivisor",
+    "CONST 456",
+    "CONST 0",
+    "METHODCALL GreatestCommonDivisor/init",
+    "PRINT",
+    "NEW GreatestCommonDivisor",
+    "CONST 33",
+    "CONST 87",
+    "METHODCALL GreatestCommonDivisor/init",
+    "PRINT",
+    "NEW GreatestCommonDivisor",
+    "CONST 47",
+    "CONST 6853",
+    "METHODCALL GreatestCommonDivisor/init",
+    "PRINT",
+    "RETURN"
+  ]
+}

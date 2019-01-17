@@ -45,9 +45,6 @@ fn main() {
     // Set the pc to the first instruction of the main code
     stack.new_pc(instructions.get_method_pc("AppMain").unwrap());
 
-    //println!("DEBUG: {:#?}", instructions.methods);
-    //println!("DEBUG: {:?}", instructions.code);
-
     // Execute code
     let mut pc: usize;
     let mut ins: &ByteCode;
@@ -55,7 +52,6 @@ fn main() {
     loop {
         pc = stack.get_pc();
         ins = instructions.get_ins(pc);
-        //println!("DEBUG: pc {} ins {:?}", pc, ins);
 
         match ins {
             ByteCode::MUL => {
